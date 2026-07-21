@@ -8,16 +8,23 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	_ "embed"
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/jjuanrivvera/presence/internal/store"
 )
+
+// cookieName holds the bearer token for browser clients, which cannot set an
+// Authorization header on link navigations or WebSocket handshakes (both needed
+// to reach a session's web terminal through /attach). Set by POST /login.
+const cookieName = "presence_auth"
 
 // uiHTML is the live dashboard. It is static markup with no data baked in —
 // the page's own JS fetches /list with the bearer token, so serving it
@@ -78,12 +85,17 @@ func (s *Server) Handler() http.Handler {
 		w.Header().Set("Content-Type", "image/svg+xml")
 		w.Write(iconSVG)
 	}))
+	// /login is the auth itself (validates the token in the body), so it is unauthenticated.
+	mux.Handle("/login", s.method(http.MethodPost, s.handleLogin))
 	mux.Handle("/register", s.auth(s.method(http.MethodPost, s.handleRegister)))
 	mux.Handle("/heartbeat", s.auth(s.method(http.MethodPost, s.handleHeartbeat)))
 	mux.Handle("/deregister", s.auth(s.method(http.MethodPost, s.handleDeregister)))
 	mux.Handle("/list", s.auth(s.method(http.MethodGet, s.handleList)))
 	mux.Handle("/get", s.auth(s.method(http.MethodGet, s.handleGet)))
 	mux.Handle("/prune", s.auth(s.method(http.MethodPost, s.handlePrune)))
+	// /attach/<session_id>/* reverse-proxies to that session's ttyd (subtree match).
+	// No method wrapper: it must pass GETs, static assets, and the WebSocket upgrade.
+	mux.Handle("/attach/", s.auth(s.handleAttach))
 	return mux
 }
 
@@ -105,11 +117,17 @@ func (s *Server) RunAutoPrune(ctx context.Context, interval time.Duration) {
 	}
 }
 
-// auth requires "Authorization: Bearer <token>", compared constant-time.
-// Both sides are hashed first so the comparison never leaks length either.
+// auth accepts the token from either "Authorization: Bearer <token>" (CLI clients)
+// or the presence_auth cookie (browsers, which can't set headers on link/WS
+// navigations). Compared constant-time, both sides hashed so length never leaks.
 func (s *Server) auth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		got, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
+		if !ok {
+			if c, err := r.Cookie(cookieName); err == nil {
+				got, ok = c.Value, true
+			}
+		}
 		gh := sha256.Sum256([]byte(got))
 		wh := sha256.Sum256([]byte(s.token))
 		if !ok || subtle.ConstantTimeCompare(gh[:], wh[:]) != 1 {
@@ -118,6 +136,73 @@ func (s *Server) auth(next http.HandlerFunc) http.HandlerFunc {
 		}
 		next(w, r)
 	}
+}
+
+// handleLogin validates the token and, on success, sets it as an HttpOnly cookie
+// so the browser carries auth on subsequent /list polls and /attach navigations
+// without a second prompt. This is the single sign-in for the whole cockpit.
+func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Token string `json:"token"`
+	}
+	if !decodeBody(w, r, &req) {
+		return
+	}
+	gh := sha256.Sum256([]byte(req.Token))
+	wh := sha256.Sum256([]byte(s.token))
+	if subtle.ConstantTimeCompare(gh[:], wh[:]) != 1 {
+		writeErr(w, http.StatusUnauthorized, "bad token")
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     cookieName,
+		Value:    req.Token,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   365 * 24 * 3600,
+	})
+	writeJSON(w, http.StatusOK, map[string]any{"ok": true})
+}
+
+// handleAttach reverse-proxies /attach/<session_id>/* to that session's ttyd web
+// terminal. It injects ttyd's basic-auth so the user authenticates once (the
+// presence login) and never sees ttyd's own prompt. The ttyd runs with base-path
+// /attach/<session_id>, so request paths pass through unrewritten (assets + WS).
+func (s *Server) handleAttach(w http.ResponseWriter, r *http.Request) {
+	rest := strings.TrimPrefix(r.URL.Path, "/attach/")
+	sid := rest
+	if i := strings.IndexByte(rest, '/'); i >= 0 {
+		sid = rest[:i]
+	}
+	if !sessionIDRe.MatchString(sid) {
+		writeErr(w, http.StatusBadRequest, "bad session_id")
+		return
+	}
+	row, err := s.store.GetByID(sid)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "store error")
+		return
+	}
+	if row == nil || row.AttachAddr == "" {
+		writeErr(w, http.StatusNotFound, "no attachable session")
+		return
+	}
+	host := row.AttachAddr
+	basic := "Basic " + base64.StdEncoding.EncodeToString([]byte("mesh:"+s.token))
+	proxy := &httputil.ReverseProxy{
+		FlushInterval: -1, // stream terminal output as it arrives
+		Director: func(req *http.Request) {
+			req.URL.Scheme = "http"
+			req.URL.Host = host
+			req.Host = host
+			req.Header.Set("Authorization", basic)
+		},
+		ErrorHandler: func(w http.ResponseWriter, _ *http.Request, _ error) {
+			writeErr(w, http.StatusBadGateway, "attach upstream unreachable")
+		},
+	}
+	proxy.ServeHTTP(w, r)
 }
 
 func (s *Server) method(m string, next http.HandlerFunc) http.HandlerFunc {

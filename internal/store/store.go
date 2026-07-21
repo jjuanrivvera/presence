@@ -202,6 +202,20 @@ func (s *Store) Get(repo string, hosts []string, agent string, fresh time.Durati
 	return &r, nil
 }
 
+// GetByID returns the session with the given id, or (nil, nil) if absent.
+// Used by the attach reverse-proxy to resolve a session's web-terminal address.
+func (s *Store) GetByID(sessionID string) (*Session, error) {
+	row := s.db.QueryRow(`SELECT `+sessionCols+` FROM sessions WHERE session_id = ?`, sessionID)
+	r, err := scanSession(row)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
 // Prune deletes rows whose last_seen is older than olderThan; returns the count.
 func (s *Store) Prune(olderThan time.Duration) (int64, error) {
 	cutoff := s.now().UTC().Add(-olderThan).Format(time.RFC3339)

@@ -150,6 +150,16 @@
 
   function token() { return localStorage.getItem(KEY) || ""; }
 
+  // Sync the auth cookie so link navigations to /attach/* carry auth (fetch can send
+  // the bearer header, but a clicked <a> or a WebSocket handshake cannot). Best-effort.
+  function ensureCookie(v) {
+    return fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: v })
+    });
+  }
+
   function showGate() {
     if (timer) { clearInterval(timer); timer = null; }
     gate.classList.add("visible");
@@ -184,7 +194,7 @@
       "</div>" +
       '<div class="repo">' + repo + branch + "</div>" +
       '<div class="meta">' + port + '<span class="fresh"><span class="dot ' + freshClass(secs) + '"></span>' + ago(secs) + "</span></div>" +
-      (row.attach_addr ? '<a class="attach" href="http://' + esc(row.attach_addr) + '/" target="_blank" rel="noopener">▸ attach</a>' : "") +
+      (row.attach_addr ? '<a class="attach" href="/attach/' + encodeURIComponent(row.session_id) + '/" target="_blank" rel="noopener">▸ attach</a>' : "") +
       '<div class="sid mono">' + esc(row.session_id) + "</div></div>";
   }
 
@@ -223,13 +233,14 @@
 
   document.getElementById("token-save").addEventListener("click", function () {
     var v = input.value.trim(); if (!v) return;
-    localStorage.setItem(KEY, v); input.value = ""; startPolling();
+    localStorage.setItem(KEY, v); input.value = "";
+    ensureCookie(v).then(startPolling, startPolling);
   });
   input.addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("token-save").click(); });
   document.getElementById("change-token").addEventListener("click", function () { localStorage.removeItem(KEY); showGate(); });
 
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function () {});
-  if (token()) startPolling(); else showGate();
+  if (token()) ensureCookie(token()).then(startPolling, startPolling); else showGate();
 })();
 </script>
 </body>
