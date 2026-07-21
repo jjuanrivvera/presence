@@ -16,7 +16,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 	"time"
 
 	"github.com/jjuanrivvera/presence/internal/client"
@@ -54,6 +53,8 @@ func main() {
 		cmdDeregister(args)
 	case "list":
 		cmdList(args)
+	case "watch":
+		cmdWatch(args)
 	case "get":
 		cmdGet(args)
 	case "prune":
@@ -77,7 +78,8 @@ Usage:
   presence register   [--session-id ID] [--inject-port N] [--host LABEL]
   presence heartbeat  [--session-id ID] [--state busy|idle]
   presence deregister [--session-id ID]
-  presence list       [--host H] [--repo R] [--fresh 2m] [-o json|table]
+  presence list       [--host H] [--repo R] [--agent A] [--fresh 2m] [-o json|table]
+  presence watch      [-n 2]     # live full-screen mesh cockpit (blocked-first, colored)
   presence get        --repo R [--host mac,pc] [--fresh 2m] [-o json]
   presence prune      [--older-than 10m]
   presence version
@@ -297,13 +299,7 @@ func cmdList(args []string) {
 		json.NewEncoder(os.Stdout).Encode(rows)
 		return
 	}
-	w := tabwriter.NewWriter(os.Stdout, 2, 4, 2, ' ', 0)
-	fmt.Fprintln(w, "SESSION\tHOST\tAGENT\tREPO\tBRANCH\tPORT\tSTATE\tLAST SEEN")
-	for _, r := range rows {
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%d\t%s\t%s\n",
-			r.SessionID, r.Host, r.Agent, r.Repo, r.Branch, r.InjectPort, r.State, r.LastSeen)
-	}
-	w.Flush()
+	fmt.Print(renderTable(rows, stdoutIsTTY()))
 }
 
 func cmdGet(args []string) {
