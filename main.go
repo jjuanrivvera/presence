@@ -51,7 +51,7 @@ func main() {
 		cmdHeartbeat(args)
 	case "deregister":
 		cmdDeregister(args)
-	case "list":
+	case "list", "ls":
 		cmdList(args)
 	case "watch":
 		cmdWatch(args)
@@ -59,6 +59,15 @@ func main() {
 		cmdGet(args)
 	case "prune":
 		cmdPrune(args)
+	case "launch":
+		cmdLaunch(args)
+	case "claude", "codex":
+		// ergonomic alias: `mesh claude [dir]` == `presence launch claude [dir]`
+		cmdLaunch(append([]string{cmd}, args...))
+	case "attach":
+		cmdAttach(args)
+	case "ttyd":
+		cmdTtyd(args)
 	case "version":
 		fmt.Println("presence " + version.String())
 	case "-h", "--help", "help":
@@ -82,7 +91,12 @@ Usage:
   presence watch      [-n 2]     # live full-screen mesh cockpit (blocked-first, colored)
   presence get        --repo R [--host mac,pc] [--fresh 2m] [-o json]
   presence prune      [--older-than 10m]
+  presence launch     <claude|codex> [dir] [--detach] [-- args…]   # start agent in tmux, attachable
+  presence attach     <name>     # reattach to a mesh session (also: mesh claude [dir])
+  presence ttyd       spawn <sid> <tmux-session> [socket] | kill <sid> | reap
   presence version
+
+Installed as "mesh" too: mesh claude [dir], mesh ls, mesh attach NAME.
 
 Config precedence: flag > env var > ~/.config/presence/env
 Keys: PRESENCE_URL, PRESENCE_TOKEN, PRESENCE_HOST (client); PRESENCE_BIND, PRESENCE_TTL (serve)

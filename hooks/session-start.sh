@@ -29,12 +29,14 @@ EDCP=$(discover_edc_port)
 [ -n "$EDCP" ] && export EDC_INJECT_PORT="$EDCP"
 
 # Web-terminal attach: if this session runs inside tmux, spawn a per-session ttyd and
-# advertise its address so the cockpit can attach (view live + type + ESC). Fail-soft.
-MTTYD="$HOME/.local/bin/mesh-ttyd"; [ -x "$MTTYD" ] || MTTYD="$(command -v mesh-ttyd 2>/dev/null)"
-if [ -n "${TMUX:-}" ] && [ -n "$MTTYD" ] && [ -n "${CLAUDE_SESSION_ID:-}" ] && command -v tmux >/dev/null 2>&1; then
+# advertise its address so the cockpit can attach (view live + type + ESC). The ttyd
+# lifecycle now lives in the presence binary (`presence ttyd`), which derives the tmux
+# socket from $TMUX. Fail-soft.
+PBIN="$HOME/.local/bin/presence"; [ -x "$PBIN" ] || PBIN="$(command -v presence 2>/dev/null)"
+if [ -n "${TMUX:-}" ] && [ -n "$PBIN" ] && [ -n "${CLAUDE_SESSION_ID:-}" ] && command -v tmux >/dev/null 2>&1; then
   TSESS=$(tmux display-message -p '#S' 2>/dev/null)
   if [ -n "$TSESS" ]; then
-    ADDR=$("$MTTYD" spawn "$CLAUDE_SESSION_ID" "$TSESS" 2>/dev/null)
+    ADDR=$("$PBIN" ttyd spawn "$CLAUDE_SESSION_ID" "$TSESS" 2>/dev/null)
     [ -n "$ADDR" ] && export PRESENCE_ATTACH_ADDR="$ADDR"
   fi
 fi

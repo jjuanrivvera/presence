@@ -8,8 +8,7 @@ BIN="$HOME/.local/bin/presence"
 [ -x "$BIN" ] || BIN="$(command -v presence 2>/dev/null)"
 [ -n "$BIN" ] || exit 0
 "$BIN" deregister >/dev/null 2>&1 || true
-# Tear down this session's web terminal (ttyd), if any.
-MTTYD="$HOME/.local/bin/mesh-ttyd"; [ -x "$MTTYD" ] || MTTYD="$(command -v mesh-ttyd 2>/dev/null)"
-[ -n "$MTTYD" ] && [ -n "${CLAUDE_SESSION_ID:-}" ] && "$MTTYD" kill "$CLAUDE_SESSION_ID" 2>/dev/null
+# Tear down this session's web terminal (ttyd), if any — now via `presence ttyd kill`.
+[ -n "${CLAUDE_SESSION_ID:-}" ] && "$BIN" ttyd kill "$CLAUDE_SESSION_ID" 2>/dev/null
 [ -n "${CLAUDE_SESSION_ID:-}" ] && rm -f "$HOME/.local/state/presence/sessions/$CLAUDE_SESSION_ID" 2>/dev/null
 exit 0
