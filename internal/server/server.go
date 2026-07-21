@@ -192,8 +192,10 @@ func (s *Server) handleHeartbeat(w http.ResponseWriter, r *http.Request) {
 	if req.State == "" {
 		req.State = "busy"
 	}
-	if req.State != "busy" && req.State != "idle" {
-		writeErr(w, http.StatusBadRequest, "state: must be busy or idle")
+	// "blocked" = the session is waiting on human input (a permission prompt / a question).
+	// It is the highest-signal state: it tells the mesh which session needs you right now.
+	if req.State != "busy" && req.State != "idle" && req.State != "blocked" {
+		writeErr(w, http.StatusBadRequest, "state: must be busy, idle, or blocked")
 		return
 	}
 	found, err := s.store.Heartbeat(req.SessionID, req.State)

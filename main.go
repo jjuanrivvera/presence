@@ -255,8 +255,8 @@ func cmdHeartbeat(args []string) {
 	hostFlag := fs.String("host", "", "machine label (default $PRESENCE_HOST)")
 	fs.Parse(args)
 
-	if *state != "" && *state != "busy" && *state != "idle" {
-		fatal("--state must be busy or idle")
+	if *state != "" && *state != "busy" && *state != "idle" && *state != "blocked" {
+		fatal("--state must be busy, idle, or blocked")
 	}
 	cc := newClientCtx(*sessionID, *hostFlag, true)
 	// The register payload doubles as the 404 recovery path (server pruned us); agent comes
