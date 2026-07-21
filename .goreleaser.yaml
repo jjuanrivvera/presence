@@ -1,0 +1,42 @@
+version: 2
+
+project_name: presence
+
+builds:
+  - id: presence
+    main: .
+    binary: presence
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/jjuanrivvera/presence/internal/version.Version={{.Version}}
+      - -X github.com/jjuanrivvera/presence/internal/version.Commit={{.ShortCommit}}
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - hooks/*
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  draft: false

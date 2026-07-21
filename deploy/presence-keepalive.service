@@ -1,0 +1,9 @@
+# systemd user unit — heartbeat de sesiones claude locales vivas pero idle.
+# Instalar junto a presence-keepalive.timer en ~/.config/systemd/user/.
+# Ajustar la ruta del script segun la maquina (repo o copia en ~/bin).
+[Unit]
+Description=presence keepalive - late por sesiones claude idle
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh %h/repos/personal/presence/hooks/keepalive.sh

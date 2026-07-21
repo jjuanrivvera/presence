@@ -1,0 +1,12 @@
+[Unit]
+Description=presence keepalive cada 2 min
+
+[Timer]
+OnBootSec=45s
+# 60s con precision de 15s: el server filtra listados a 120s de frescura por
+# defecto — con ticks de 120s + jitter del timer las sesiones parpadeaban.
+OnUnitActiveSec=60s
+AccuracySec=15s
+
+[Install]
+WantedBy=timers.target

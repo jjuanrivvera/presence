@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>presence — ambient mesh</title>
+<style>
+  :root {
+    --bg: #16181d;
+    --card: #1f2229;
+    --fg: #e8e8e3;
+    --muted: #8b8f98;
+    --border: #2b2f38;
+    --mac: #3987e5;
+    --pc: #1baf7a;
+    --vps: #9085e9;
+    --other: #6b7280;
+    --busy: #e5a53a;
+    --idle: #6b7280;
+    --ok: #35c26e;
+    --warn: #e5a53a;
+    --bad: #e05252;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 1.25rem;
+  }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;
+    max-width: 960px;
+    margin: 0 auto 1.25rem;
+  }
+  h1 { font-size: 1.15rem; font-weight: 600; letter-spacing: .02em; }
+  h1 .dim { color: var(--muted); font-weight: 400; }
+  #status { color: var(--muted); font-size: .85rem; }
+  #status .err { color: var(--bad); }
+  main { max-width: 960px; margin: 0 auto; }
+
+  /* token gate */
+  #token-gate {
+    max-width: 420px;
+    margin: 15vh auto 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: none;
+  }
+  #token-gate.visible { display: block; }
+  #token-gate p { color: var(--muted); font-size: .9rem; margin-bottom: 1rem; }
+  #token-gate .row { display: flex; gap: .5rem; }
+  #token-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--fg);
+    padding: .55rem .75rem;
+    font-size: .9rem;
+  }
+  #token-input:focus { outline: 1px solid var(--mac); }
+  button {
+    background: var(--mac);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    padding: .55rem 1rem;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+  button.ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: .3rem .7rem;
+    font-size: .78rem;
+  }
+  button.ghost:hover { color: var(--fg); border-color: var(--muted); }
+
+  /* grid of session cards */
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: .9rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+  .card .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+  .chip {
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: .18rem .55rem;
+    border-radius: 999px;
+    color: #fff;
+  }
+  .badge {
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .18rem .55rem;
+    border-radius: 999px;
+  }
+  .badge.busy { background: rgba(229,165,58,.15); color: var(--busy); }
+  .badge.idle { background: rgba(107,114,128,.18); color: #9aa0aa; }
+  .repo { font-size: 1.15rem; font-weight: 650; line-height: 1.25; word-break: break-word; }
+  .repo .branch { color: var(--muted); font-weight: 400; font-size: .95rem; }
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    color: var(--muted);
+    font-size: .8rem;
+    flex-wrap: wrap;
+  }
+  .port { color: var(--fg); }
+  .port.none { color: var(--muted); }
+  .fresh { display: inline-flex; align-items: center; gap: .35rem; white-space: nowrap; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot.ok { background: var(--ok); }
+  .dot.warn { background: var(--warn); }
+  .dot.bad { background: var(--bad); }
+  .sid { color: var(--muted); font-size: .72rem; word-break: break-all; }
+
+  #empty {
+    color: var(--muted);
+    text-align: center;
+    padding: 4rem 1rem;
+    font-size: .95rem;
+    display: none;
+  }
+  #empty.visible { display: block; }
+
+  @media (max-width: 480px) {
+    body { padding: .9rem; }
+    #grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>presence <span class="dim">— ambient mesh</span></h1>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span id="status">—</span>
+    <button class="ghost" id="change-token">cambiar token</button>
+  </div>
+</header>
+
+<div id="token-gate">
+  <p>Pega el token del mesh para ver las sesiones vivas.</p>
+  <div class="row">
+    <input id="token-input" type="password" class="mono" placeholder="PRESENCE_TOKEN" autocomplete="off">
+    <button id="token-save">entrar</button>
+  </div>
+</div>
+
+<main>
+  <div id="grid"></div>
+  <div id="empty">sin sesiones vivas</div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "presence_token";
+  var gate = document.getElementById("token-gate");
+  var grid = document.getElementById("grid");
+  var empty = document.getElementById("empty");
+  var statusEl = document.getElementById("status");
+  var input = document.getElementById("token-input");
+  var lastFetch = 0;
+  var timer = null;
+
+  var HOST_COLORS = { mac: "var(--mac)", pc: "var(--pc)", vps: "var(--vps)" };
+
+  function token() { return localStorage.getItem(KEY) || ""; }
+
+  function showGate() {
+    if (timer) { clearInterval(timer); timer = null; }
+    gate.classList.add("visible");
+    grid.innerHTML = "";
+    empty.classList.remove("visible");
+    statusEl.textContent = "token requerido";
+    input.focus();
+  }
+
+  function startPolling() {
+    gate.classList.remove("visible");
+    if (timer) clearInterval(timer);
+    poll();
+    timer = setInterval(poll, 2000);
+  }
+
+  function ago(seconds) {
+    if (seconds < 60) return "hace " + seconds + "s";
+    if (seconds < 3600) return "hace " + Math.floor(seconds / 60) + "m";
+    return "hace " + Math.floor(seconds / 3600) + "h";
+  }
+
+  function freshClass(seconds) {
+    if (seconds < 60) return "ok";
+    if (seconds < 120) return "warn";
+    return "bad";
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function card(row) {
+    var now = Date.now();
+    var seen = Date.parse(row.last_seen);
+    var secs = isNaN(seen) ? 999999 : Math.max(0, Math.round((now - seen) / 1000));
+    var color = HOST_COLORS[row.host] || "var(--other)";
+    var state = row.state === "idle" ? "idle" : "busy";
+    var port = row.inject_port > 0
+      ? '<span class="port mono">&#9889; ' + row.inject_port + "</span>"
+      : '<span class="port none">no inyectable</span>';
+    var repo = row.repo ? esc(row.repo) : '<span class="dim" style="color:var(--muted)">(sin repo)</span>';
+    var branch = row.branch ? ' <span class="branch mono">' + esc(row.branch) + "</span>" : "";
+    return '<div class="card">' +
+      '<div class="top">' +
+        '<span class="chip" style="background:' + color + '">' + esc(row.host) + "</span>" +
+        '<span class="badge ' + state + '">' + state + "</span>" +
+      "</div>" +
+      '<div class="repo">' + repo + branch + "</div>" +
+      '<div class="meta">' + port +
+        '<span class="fresh"><span class="dot ' + freshClass(secs) + '"></span>' + ago(secs) + "</span>" +
+      "</div>" +
+      '<div class="sid mono">' + esc(row.session_id) + "</div>" +
+    "</div>";
+  }
+
+  function render(rows) {
+    if (!rows || rows.length === 0) {
+      grid.innerHTML = "";
+      empty.classList.add("visible");
+    } else {
+      empty.classList.remove("visible");
+      grid.innerHTML = rows.map(card).join("");
+    }
+    var n = rows ? rows.length : 0;
+    var since = Math.round((Date.now() - lastFetch) / 1000);
+    statusEl.textContent = n + (n === 1 ? " sesión" : " sesiones") + " · actualizado hace " + since + "s";
+  }
+
+  function poll() {
+    fetch("/list?fresh=10m", { headers: { Authorization: "Bearer " + token() } })
+      .then(function (resp) {
+        if (resp.status === 401) { showGate(); throw new Error("unauthorized"); }
+        if (!resp.ok) throw new Error("http " + resp.status);
+        return resp.json();
+      })
+      .then(function (rows) {
+        lastFetch = Date.now();
+        render(rows);
+      })
+      .catch(function (err) {
+        if (err.message === "unauthorized") return;
+        statusEl.innerHTML = '<span class="err">sin conexión</span>';
+      });
+  }
+
+  document.getElementById("token-save").addEventListener("click", function () {
+    var v = input.value.trim();
+    if (!v) return;
+    localStorage.setItem(KEY, v);
+    input.value = "";
+    startPolling();
+  });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") document.getElementById("token-save").click();
+  });
+  document.getElementById("change-token").addEventListener("click", function () {
+    localStorage.removeItem(KEY);
+    showGate();
+  });
+
+  if (token()) startPolling(); else showGate();
+})();
+</script>
+</body>
+</html>
