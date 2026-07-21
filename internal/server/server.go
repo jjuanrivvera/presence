@@ -26,6 +26,18 @@ import (
 //go:embed ui.html
 var uiHTML []byte
 
+// PWA assets served alongside /ui, all unauthenticated (they carry no data — the page's JS
+// still needs the bearer token to call /list).
+//
+//go:embed manifest.json
+var manifestJSON []byte
+
+//go:embed sw.js
+var swJS []byte
+
+//go:embed icon.svg
+var iconSVG []byte
+
 const maxBodyBytes = 16 << 10 // 16 KiB
 
 var (
@@ -53,6 +65,18 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("/ui", s.method(http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Write(uiHTML)
+	}))
+	mux.Handle("/manifest.json", s.method(http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/manifest+json")
+		w.Write(manifestJSON)
+	}))
+	mux.Handle("/sw.js", s.method(http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/javascript")
+		w.Write(swJS)
+	}))
+	mux.Handle("/icon.svg", s.method(http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/svg+xml")
+		w.Write(iconSVG)
 	}))
 	mux.Handle("/register", s.auth(s.method(http.MethodPost, s.handleRegister)))
 	mux.Handle("/heartbeat", s.auth(s.method(http.MethodPost, s.handleHeartbeat)))
