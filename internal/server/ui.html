@@ -142,7 +142,8 @@
   }
   #vp-back { display: none; }
   #vp-head .host { font-size: .8rem; }
-  #vp-head .vp-repo { font-family: var(--font-mono); font-size: .82rem; font-weight: 600; }
+  #vp-head { min-width: 0; }
+  #vp-head .vp-repo { font-family: var(--font-mono); font-size: .82rem; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #vp-head .vp-repo .branch { color: var(--dim); font-weight: 400; }
   #vp-head .sp { flex: 1; }
   #vp-head .hint { color: var(--dim); font-size: .66rem; font-family: var(--font-mono); }
@@ -190,6 +191,14 @@
     #body.show-term #sidebar { display: none; }
     #body.show-term #viewport { display: flex; }
     #vp-back { display: inline-flex; }
+    /* topbar must fit a phone: drop the subtitle + clock, let the chips scroll rather
+       than force the whole app wider than the viewport (which clipped card content). */
+    #topbar { gap: .5rem; padding: .6rem .7rem; padding-top: max(.6rem, env(safe-area-inset-top)); }
+    .brand span { display: none; }
+    #clock { display: none; }
+    #summary { min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    #summary::-webkit-scrollbar { display: none; }
+    .stat { flex: none; padding: .26rem .5rem; font-size: .66rem; }
   }
 </style>
 </head>
