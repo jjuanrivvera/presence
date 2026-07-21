@@ -2,7 +2,7 @@
 // cache mask live data or a fresh deploy. The shell HTML is fetched network-first so a new
 // /ui (e.g. a changed attach link) propagates without a manual cache bump; only the static
 // assets (icon, manifest) are cache-first. Bump CACHE on breaking shell changes.
-const CACHE = "presence-shell-v2";
+const CACHE = "presence-shell-v3";
 const SHELL = ["/ui", "/manifest.json", "/icon.svg"];
 
 self.addEventListener("install", (e) => {
