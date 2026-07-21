@@ -143,7 +143,7 @@ func cmdServe(args []string) {
 	if err != nil {
 		fatal("open store: %v", err)
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	srv := server.New(st, token, ttl)
 	ctx, cancel := context.WithCancel(context.Background())
