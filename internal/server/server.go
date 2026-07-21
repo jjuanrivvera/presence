@@ -157,7 +157,8 @@ type registerReq struct {
 	Branch     string `json:"branch"`
 	InjectPort int    `json:"inject_port"`
 	PID        int    `json:"pid"`
-	Agent      string `json:"agent"` // "claude" (default) | "codex" | future; empty defaults server-side
+	Agent      string `json:"agent"`       // "claude" (default) | "codex" | future; empty defaults server-side
+	AttachAddr string `json:"attach_addr"` // host:port of this session's web terminal (ttyd), or empty
 }
 
 func validateRegister(req registerReq) string {
@@ -193,6 +194,7 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		SessionID: req.SessionID, Host: req.Host, Repo: req.Repo,
 		RepoPath: req.RepoPath, Branch: req.Branch,
 		InjectPort: req.InjectPort, PID: req.PID, Agent: req.Agent,
+		AttachAddr: req.AttachAddr,
 	})
 	if err != nil {
 		writeErr(w, http.StatusInternalServerError, "store error")

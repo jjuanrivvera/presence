@@ -200,7 +200,7 @@ func newClientCtx(sessionIDFlag, hostFlag string, needSession bool) clientCtx {
 // buildRegisterReq captures the launch cwd once: repo/branch/repo_path are
 // deliberately NOT refreshed mid-session (a session belongs to the dir it
 // opened in).
-func buildRegisterReq(cc clientCtx, injectPort int, agent string) client.RegisterReq {
+func buildRegisterReq(cc clientCtx, injectPort int, agent, attachAddr string) client.RegisterReq {
 	cwd, err := os.Getwd()
 	if err != nil {
 		cwd = "."
@@ -221,6 +221,9 @@ func buildRegisterReq(cc clientCtx, injectPort int, agent string) client.Registe
 	if agent == "" {
 		agent = os.Getenv("PRESENCE_AGENT")
 	}
+	if attachAddr == "" {
+		attachAddr = os.Getenv("PRESENCE_ATTACH_ADDR")
+	}
 	return client.RegisterReq{
 		SessionID:  cc.sessionID,
 		Host:       cc.host,
@@ -230,6 +233,7 @@ func buildRegisterReq(cc clientCtx, injectPort int, agent string) client.Registe
 		InjectPort: injectPort,
 		PID:        os.Getppid(),
 		Agent:      agent,
+		AttachAddr: attachAddr,
 	}
 }
 
@@ -241,10 +245,11 @@ func cmdRegister(args []string) {
 	injectPort := fs.Int("inject-port", 0, "edc /inject port (default $EDC_INJECT_PORT, 0 = not injectable)")
 	hostFlag := fs.String("host", "", "machine label (default $PRESENCE_HOST)")
 	agent := fs.String("agent", "", "agent kind: claude|codex (default $PRESENCE_AGENT, else claude)")
+	attachAddr := fs.String("attach-addr", "", "web-terminal host:port for attach (default $PRESENCE_ATTACH_ADDR)")
 	fs.Parse(args)
 
 	cc := newClientCtx(*sessionID, *hostFlag, true)
-	if err := cc.cli.Register(buildRegisterReq(cc, *injectPort, *agent)); err != nil {
+	if err := cc.cli.Register(buildRegisterReq(cc, *injectPort, *agent, *attachAddr)); err != nil {
 		fatal("register: %v", err)
 	}
 	fmt.Println("ok")
@@ -263,7 +268,7 @@ func cmdHeartbeat(args []string) {
 	cc := newClientCtx(*sessionID, *hostFlag, true)
 	// The register payload doubles as the 404 recovery path (server pruned us); agent comes
 	// from $PRESENCE_AGENT so a recovered codex row keeps its kind.
-	if err := cc.cli.Heartbeat(cc.sessionID, *state, buildRegisterReq(cc, 0, "")); err != nil {
+	if err := cc.cli.Heartbeat(cc.sessionID, *state, buildRegisterReq(cc, 0, "", "")); err != nil {
 		fatal("heartbeat: %v", err)
 	}
 	fmt.Println("ok")

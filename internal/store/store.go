@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   pid          INTEGER NOT NULL DEFAULT 0,
   state        TEXT NOT NULL DEFAULT 'idle',
   agent        TEXT NOT NULL DEFAULT 'claude',
+  attach_addr  TEXT NOT NULL DEFAULT '',
   started_at   TEXT NOT NULL,
   last_seen    TEXT NOT NULL
 );
@@ -40,6 +41,7 @@ type Session struct {
 	PID        int    `json:"pid"`
 	State      string `json:"state"`
 	Agent      string `json:"agent"`
+	AttachAddr string `json:"attach_addr"`
 	StartedAt  string `json:"started_at"`
 	LastSeen   string `json:"last_seen"`
 }
@@ -70,6 +72,14 @@ func Open(path string) (*Store, error) {
 			return nil, err
 		}
 	}
+	// attach_addr: host:port of this session's web terminal (ttyd), so a UI can deep-link to
+	// "attach" and stream/steer it. Empty when the session has no attach endpoint.
+	if _, err := db.Exec(`ALTER TABLE sessions ADD COLUMN attach_addr TEXT NOT NULL DEFAULT ''`); err != nil {
+		if !strings.Contains(err.Error(), "duplicate column name") {
+			db.Close()
+			return nil, err
+		}
+	}
 	return &Store{db: db, now: time.Now}, nil
 }
 
@@ -89,14 +99,14 @@ func (s *Store) Upsert(sess Session) error {
 		agent = "claude" // registrations from the pre-agent client default to claude
 	}
 	_, err := s.db.Exec(`
-		INSERT INTO sessions (session_id, host, repo, repo_path, branch, inject_port, pid, state, agent, started_at, last_seen)
-		VALUES (?, ?, ?, ?, ?, ?, ?, 'busy', ?, ?, ?)
+		INSERT INTO sessions (session_id, host, repo, repo_path, branch, inject_port, pid, state, agent, attach_addr, started_at, last_seen)
+		VALUES (?, ?, ?, ?, ?, ?, ?, 'busy', ?, ?, ?, ?)
 		ON CONFLICT(session_id) DO UPDATE SET
 		  host=excluded.host, repo=excluded.repo, repo_path=excluded.repo_path,
 		  branch=excluded.branch, inject_port=excluded.inject_port, pid=excluded.pid,
-		  state='busy', agent=excluded.agent, last_seen=excluded.last_seen`,
+		  state='busy', agent=excluded.agent, attach_addr=excluded.attach_addr, last_seen=excluded.last_seen`,
 		sess.SessionID, sess.Host, sess.Repo, sess.RepoPath, sess.Branch,
-		sess.InjectPort, sess.PID, agent, now, now)
+		sess.InjectPort, sess.PID, agent, sess.AttachAddr, now, now)
 	return err
 }
 
@@ -117,12 +127,12 @@ func (s *Store) Delete(sessionID string) error {
 	return err
 }
 
-const sessionCols = `session_id, host, repo, repo_path, branch, inject_port, pid, state, agent, started_at, last_seen`
+const sessionCols = `session_id, host, repo, repo_path, branch, inject_port, pid, state, agent, attach_addr, started_at, last_seen`
 
 func scanSession(sc interface{ Scan(...any) error }) (Session, error) {
 	var r Session
 	err := sc.Scan(&r.SessionID, &r.Host, &r.Repo, &r.RepoPath, &r.Branch,
-		&r.InjectPort, &r.PID, &r.State, &r.Agent, &r.StartedAt, &r.LastSeen)
+		&r.InjectPort, &r.PID, &r.State, &r.Agent, &r.AttachAddr, &r.StartedAt, &r.LastSeen)
 	return r, err
 }
 

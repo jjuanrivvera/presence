@@ -46,7 +46,8 @@ type RegisterReq struct {
 	Branch     string `json:"branch"`
 	InjectPort int    `json:"inject_port"`
 	PID        int    `json:"pid"`
-	Agent      string `json:"agent,omitempty"` // omit when empty so old servers ignore it
+	Agent      string `json:"agent,omitempty"`       // omit when empty so old servers ignore it
+	AttachAddr string `json:"attach_addr,omitempty"` // ttyd host:port for this session, or empty
 }
 
 func (c *Client) post(path string, body any) (*http.Response, error) {

@@ -97,6 +97,12 @@
   .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   .dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.bad { background: var(--bad); }
   .sid { color: var(--muted); font-size: .72rem; word-break: break-all; }
+  .attach {
+    display: inline-block; align-self: flex-start; font-size: .82rem; font-weight: 600;
+    color: #fff; background: var(--mac); padding: .4rem .8rem; border-radius: 8px; text-decoration: none;
+  }
+  .attach:hover { filter: brightness(1.12); }
+  .card.blocked .attach { background: var(--blocked); }
 
   #empty { color: var(--muted); text-align: center; padding: 4rem 1rem; font-size: .95rem; display: none; }
   #empty.visible { display: block; }
@@ -178,6 +184,7 @@
       "</div>" +
       '<div class="repo">' + repo + branch + "</div>" +
       '<div class="meta">' + port + '<span class="fresh"><span class="dot ' + freshClass(secs) + '"></span>' + ago(secs) + "</span></div>" +
+      (row.attach_addr ? '<a class="attach" href="http://' + esc(row.attach_addr) + '/" target="_blank" rel="noopener">▸ attach</a>' : "") +
       '<div class="sid mono">' + esc(row.session_id) + "</div></div>";
   }
 
