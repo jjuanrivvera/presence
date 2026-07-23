@@ -156,6 +156,17 @@ curl -fsSL https://raw.githubusercontent.com/jjuanrivvera/presence/main/install.
 
 From source: `go build -o presence .` (Go 1.25+, `CGO_ENABLED=0`).
 
+## Claude Code skill
+
+The repo ships a `mesh` skill (`skills/mesh/SKILL.md`) that teaches an agent to
+drive the mesh — list/launch/attach/kill sessions, the cockpit, scripting the
+registry. Install it into a project (or globally) with the skills manager:
+
+```sh
+npx skills add jjuanrivvera/presence            # into this project's .claude/skills
+npx skills add jjuanrivvera/presence --global   # for all projects
+```
+
 ## Deploy (server)
 
 systemd user unit at `~/.config/systemd/user/presence.service`:
