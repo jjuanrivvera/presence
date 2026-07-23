@@ -41,8 +41,10 @@ overloading the session id.
 - **OpenCode** sessions register via an OpenCode plugin (ships in
   [`edc`](https://github.com/jjuanrivvera/edc) at `.opencode-plugin/mesh.ts`, installed to
   `~/.config/opencode/plugins/`) on the `session.created` event (`agent=opencode`) — the same
-  `presence ttyd spawn` + `presence register` wiring. Launch one with `mesh opencode [dir]`; the
-  injectable daemon is `edc opencode serve`.
+  `presence ttyd spawn` + `presence register` wiring. `mesh opencode [dir]` launches a **decoupled
+  stack** — an addressable `opencode serve` + a TUI-mode `edc` sidecar + the `opencode attach` the
+  human sees — so the interactive session is both **attachable and injectable** (`edc /inject`
+  events land visibly in the TUI). `edc opencode serve` alone is the standalone headless daemon.
 
 Every agent goes through the same two calls — `presence register` (identity + inject port +
 attach address) and `presence ttyd spawn` (the web terminal the cockpit attaches) — only *where*

@@ -12,6 +12,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -21,6 +22,45 @@ import (
 )
 
 const meshSocket = "mesh"
+
+func freeTCPPort() int {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0
+	}
+	defer ln.Close()
+	return ln.Addr().(*net.TCPAddr).Port
+}
+
+func shQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", `'\''`) + "'" }
+
+// opencodeWrapCmd builds the tmux session command for a decoupled OpenCode stack, so an
+// interactive session is both attachable AND injectable: an addressable `opencode serve`, a
+// TUI-mode `edc opencode serve` sidecar on a fixed inject port EP (injects visibly via /tui/*),
+// and the `opencode attach` the human sees. The OpenCode plugin registers the session in presence
+// with inject_port=EP (it reads $EDC_INJECT_PORT), so `edc /inject` events land in the live TUI.
+// Without edc on PATH it degrades to plain attach (attachable, not injectable).
+func opencodeWrapCmd(ocBin, dir string, extra []string) []string {
+	edcBin := lookTool("edc")
+	p, ep := freeTCPPort(), freeTCPPort()
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "%s serve --port %d --hostname 127.0.0.1 >/dev/null 2>&1 &\nSRV=$!\n", shQuote(ocBin), p)
+	// wait for the server's port to open before attaching / injecting (bash /dev/tcp probe).
+	fmt.Fprintf(&sb, "for _ in $(seq 1 60); do (exec 3<>/dev/tcp/127.0.0.1/%d) 2>/dev/null && { exec 3>&-; break; }; sleep 0.3; done\n", p)
+	if edcBin != "" {
+		fmt.Fprintf(&sb, "EDC_OPENCODE_URL=http://127.0.0.1:%d EDC_OPENCODE_TUI=1 EDC_INJECT_PORT=%d %s opencode serve >/dev/null 2>&1 &\nEDCP=$!\n", p, ep, shQuote(edcBin))
+		fmt.Fprintf(&sb, "export EDC_INJECT_PORT=%d\n", ep)
+		sb.WriteString("trap 'kill $SRV $EDCP 2>/dev/null' EXIT\n")
+	} else {
+		sb.WriteString("trap 'kill $SRV 2>/dev/null' EXIT\n")
+	}
+	fmt.Fprintf(&sb, "exec %s attach http://127.0.0.1:%d", shQuote(ocBin), p)
+	for _, a := range extra {
+		fmt.Fprintf(&sb, " %s", shQuote(a))
+	}
+	sb.WriteString("\n")
+	return []string{"bash", "-lc", sb.String()}
+}
 
 var nameStrip = regexp.MustCompile(`[^a-z0-9-]+`)
 
@@ -115,10 +155,15 @@ func cmdLaunch(args []string) {
 	if tm == "" {
 		fatal("tmux not found")
 	}
-	// -e PRESENCE_AGENT so the session registers with the right kind (claude|codex).
-	tmArgs := []string{"-L", meshSocket, "new-session", "-d", "-s", name,
-		"-e", "PRESENCE_AGENT=" + agent, "-c", abs, agentBin}
-	tmArgs = append(tmArgs, extra...)
+	// The session command: the agent directly for claude/codex, or the decoupled OpenCode stack
+	// (serve + edc sidecar + attach) so an interactive OpenCode session is also injectable.
+	sessCmd := append([]string{agentBin}, extra...)
+	if agent == "opencode" {
+		sessCmd = opencodeWrapCmd(agentBin, abs, extra)
+	}
+	// -e PRESENCE_AGENT so the session registers with the right kind (claude|codex|opencode).
+	tmArgs := append([]string{"-L", meshSocket, "new-session", "-d", "-s", name,
+		"-e", "PRESENCE_AGENT=" + agent, "-c", abs}, sessCmd...)
 	create := exec.Command(tm, tmArgs...)
 	create.Stdout, create.Stderr = os.Stderr, os.Stderr
 	if err := create.Run(); err != nil {
