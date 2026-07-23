@@ -176,7 +176,7 @@ func cmdWatch(args []string) {
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	fmt.Print("\033[?25l")            // hide cursor
+	fmt.Print("\033[?25l")              // hide cursor
 	defer fmt.Print("\033[?25h\033[0m") // restore cursor + reset on exit
 
 	draw := func() {
