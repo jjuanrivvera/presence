@@ -118,6 +118,24 @@ func readTtydState(path string) (pid, port int, tsess, sock string, ok bool) {
 	return
 }
 
+// attachAddrFromState reconstructs a session's web-terminal address from its ttyd
+// state file (tailscale-ip:port). This is the durable local truth: a re-register
+// that lost $PRESENCE_ATTACH_ADDR (e.g. the keepalive or a 404-recovery heartbeat,
+// which don't carry that env) can recover it here instead of wiping attach_addr.
+func attachAddrFromState(sid string) string {
+	if sid == "" {
+		return ""
+	}
+	_, port, _, _, ok := readTtydState(filepath.Join(ttydStateDir(), sid))
+	if !ok || port == 0 {
+		return ""
+	}
+	if ip := tsIP(); ip != "" {
+		return fmt.Sprintf("%s:%d", ip, port)
+	}
+	return ""
+}
+
 func freePort() int {
 	recorded := map[int]bool{}
 	if entries, err := os.ReadDir(ttydStateDir()); err == nil {

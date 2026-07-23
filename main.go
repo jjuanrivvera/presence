@@ -241,6 +241,12 @@ func buildRegisterReq(cc clientCtx, injectPort int, agent, attachAddr string) cl
 	if attachAddr == "" {
 		attachAddr = os.Getenv("PRESENCE_ATTACH_ADDR")
 	}
+	// Last resort: recover it from this session's live ttyd state file, so a
+	// re-register that lost the env (keepalive / 404-recovery heartbeat) doesn't
+	// wipe the attach address of a session whose web terminal is still running.
+	if attachAddr == "" {
+		attachAddr = attachAddrFromState(cc.sessionID)
+	}
 	return client.RegisterReq{
 		SessionID:  cc.sessionID,
 		Host:       cc.host,
