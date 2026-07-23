@@ -78,8 +78,8 @@ func cmdLaunch(args []string) {
 			fatal("launch: unexpected argument %q", a)
 		}
 	}
-	if agent != "claude" && agent != "codex" {
-		fatal("launch: agent must be claude or codex (got %q)", agent)
+	if agent != "claude" && agent != "codex" && agent != "opencode" {
+		fatal("launch: agent must be claude, codex, or opencode (got %q)", agent)
 	}
 	agentBin := lookTool(agent)
 	if agentBin == "" {

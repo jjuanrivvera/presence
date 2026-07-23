@@ -38,10 +38,11 @@ overloading the session id.
 - **Codex** sessions register via the [`edc`](https://github.com/jjuanrivvera/edc) `.codex-plugin`
   hooks (`agent=codex`). Interactive Codex sessions register with `inject_port=0` (visible but not
   an injection target); the `edc codex serve` daemon registers with a real inject port.
-- **OpenCode** *(planned)*: sessions would register via an OpenCode plugin
-  (`~/.config/opencode/plugins/`) on the `session.created` event (`agent=opencode`) — the same
-  `presence ttyd spawn` + `presence register` wiring. See [`edc`](https://github.com/jjuanrivvera/edc)
-  for the matching injection adapter.
+- **OpenCode** sessions register via an OpenCode plugin (ships in
+  [`edc`](https://github.com/jjuanrivvera/edc) at `.opencode-plugin/mesh.ts`, installed to
+  `~/.config/opencode/plugins/`) on the `session.created` event (`agent=opencode`) — the same
+  `presence ttyd spawn` + `presence register` wiring. Launch one with `mesh opencode [dir]`; the
+  injectable daemon is `edc opencode serve`.
 
 Every agent goes through the same two calls — `presence register` (identity + inject port +
 attach address) and `presence ttyd spawn` (the web terminal the cockpit attaches) — only *where*
