@@ -33,10 +33,20 @@ Each row carries an `agent` field (`claude` by default, `codex`, or any future a
 router route and dedup **per agent** — "is there already a Codex session on this repo?" — without
 overloading the session id.
 
-- **Claude Code** sessions register via the hooks in `hooks/` (see below).
+- **Claude Code** sessions register via the hooks in `hooks/` (see below): the session-start hook
+  runs `presence ttyd spawn` + `presence register` (`agent=claude`), session-end deregisters.
 - **Codex** sessions register via the [`edc`](https://github.com/jjuanrivvera/edc) `.codex-plugin`
   hooks (`agent=codex`). Interactive Codex sessions register with `inject_port=0` (visible but not
   an injection target); the `edc codex serve` daemon registers with a real inject port.
+- **OpenCode** *(planned)*: sessions would register via an OpenCode plugin
+  (`~/.config/opencode/plugins/`) on the `session.created` event (`agent=opencode`) — the same
+  `presence ttyd spawn` + `presence register` wiring. See [`edc`](https://github.com/jjuanrivvera/edc)
+  for the matching injection adapter.
+
+Every agent goes through the same two calls — `presence register` (identity + inject port +
+attach address) and `presence ttyd spawn` (the web terminal the cockpit attaches) — only *where*
+they are wired differs (Claude/Codex hooks, an OpenCode plugin). That is what makes the cockpit
+agent-agnostic.
 
 Register with `--agent codex` (or `$PRESENCE_AGENT`); filter with `list --agent` / `get --agent`.
 An empty agent defaults to `claude` server-side, so pre-agent clients keep working unchanged.
