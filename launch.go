@@ -44,12 +44,17 @@ func opencodeWrapCmd(ocBin, dir string, extra []string) []string {
 	edcBin := lookTool("edc")
 	p, ep := freeTCPPort(), freeTCPPort()
 	var sb strings.Builder
+	// Export the inject port BEFORE `opencode serve` so the server — which runs the mesh plugin —
+	// inherits it and the plugin registers the session with inject_port=EP (not 0). Order matters:
+	// the plugin lives in the server process, not in the later `opencode attach`.
+	if edcBin != "" {
+		fmt.Fprintf(&sb, "export EDC_INJECT_PORT=%d\n", ep)
+	}
 	fmt.Fprintf(&sb, "%s serve --port %d --hostname 127.0.0.1 >/dev/null 2>&1 &\nSRV=$!\n", shQuote(ocBin), p)
 	// wait for the server's port to open before attaching / injecting (bash /dev/tcp probe).
 	fmt.Fprintf(&sb, "for _ in $(seq 1 60); do (exec 3<>/dev/tcp/127.0.0.1/%d) 2>/dev/null && { exec 3>&-; break; }; sleep 0.3; done\n", p)
 	if edcBin != "" {
-		fmt.Fprintf(&sb, "EDC_OPENCODE_URL=http://127.0.0.1:%d EDC_OPENCODE_TUI=1 EDC_INJECT_PORT=%d %s opencode serve >/dev/null 2>&1 &\nEDCP=$!\n", p, ep, shQuote(edcBin))
-		fmt.Fprintf(&sb, "export EDC_INJECT_PORT=%d\n", ep)
+		fmt.Fprintf(&sb, "EDC_OPENCODE_URL=http://127.0.0.1:%d EDC_OPENCODE_TUI=1 %s opencode serve >/dev/null 2>&1 &\nEDCP=$!\n", p, shQuote(edcBin))
 		sb.WriteString("trap 'kill $SRV $EDCP 2>/dev/null' EXIT\n")
 	} else {
 		sb.WriteString("trap 'kill $SRV 2>/dev/null' EXIT\n")
