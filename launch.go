@@ -142,3 +142,25 @@ func cmdAttach(args []string) {
 	}
 	execTmuxAttach(meshSocket, name)
 }
+
+// cmdKill ends a mesh session by name: kills the tmux session (which terminates
+// the agent) and reaps its now-orphaned web terminal. The presence row clears on
+// the session's own SessionEnd, or is pruned once it goes stale.
+func cmdKill(args []string) {
+	name := argAt(args, 0)
+	if name == "" {
+		fatal("kill: need a session name (see `mesh ls`)")
+	}
+	if !tmuxHasSession(meshSocket, name) {
+		fatal("kill: no live mesh session %q", name)
+	}
+	tm := lookTool("tmux")
+	if tm == "" {
+		fatal("tmux not found")
+	}
+	if err := exec.Command(tm, "-L", meshSocket, "kill-session", "-t", name).Run(); err != nil {
+		fatal("kill: %v", err)
+	}
+	ttydReap() // drop the ttyd whose tmux session just went away
+	fmt.Printf("killed %s\n", name)
+}

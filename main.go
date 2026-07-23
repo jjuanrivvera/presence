@@ -66,6 +66,8 @@ func main() {
 		cmdLaunch(append([]string{cmd}, args...))
 	case "attach":
 		cmdAttach(args)
+	case "kill":
+		cmdKill(args)
 	case "ttyd":
 		cmdTtyd(args)
 	case "version":
@@ -93,6 +95,7 @@ Usage:
   presence prune      [--older-than 10m]
   presence launch     <claude|codex> [dir] [--detach] [-- args…]   # start agent in tmux, attachable
   presence attach     <name>     # reattach to a mesh session (also: mesh claude [dir])
+  presence kill       <name>     # end a mesh session (kills the agent + its terminal)
   presence ttyd       spawn <sid> <tmux-session> [socket] | kill <sid> | reap
   presence version
 

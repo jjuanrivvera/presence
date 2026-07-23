@@ -1,0 +1,25 @@
+{
+  "name": "presence-mesh-skill",
+  "version": "0.1.0",
+  "description": "Installer for the 'mesh' Claude Code skill (presence cockpit). Teaches an agent to use the mesh: npx github:jjuanrivvera/presence",
+  "type": "module",
+  "bin": {
+    "install-mesh-skill": "skill/install.mjs"
+  },
+  "files": [
+    "skill/SKILL.md",
+    "skill/install.mjs"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjuanrivvera/presence.git"
+  },
+  "keywords": [
+    "claude-code",
+    "skill",
+    "mesh",
+    "presence",
+    "agents"
+  ]
+}
