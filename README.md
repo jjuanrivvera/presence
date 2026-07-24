@@ -1,12 +1,20 @@
 # presence
 
-Session registry for an ambient agent mesh. Every coding-agent session — Claude Code or Codex,
-on any machine — publishes its live state (repo, branch, inject port, agent, freshness) to a tiny
-HTTP service backed by SQLite. A router (or you) queries it to decide whether to run an event
-locally or delegate it into a session that already has related work in progress.
+**The mesh's eyes and hands.** One Go binary (installed as both `presence` and `mesh`) that does three
+things for coding-agent sessions — Claude Code, Codex, or OpenCode — across your machines:
 
-It is a read-mostly blackboard (choreography, not orchestration): sessions write their own row, a
-reader queries and decides.
+- a **registry** — every session publishes its live state (repo, agent, state, inject port, attach
+  address) to a tiny SQLite-backed HTTP service;
+- a **cockpit** — a web/PWA dashboard with each session's live terminal (view, type, interrupt);
+- a **launcher** — `mesh claude|codex|opencode [dir]` starts an attachable session in tmux.
+
+It pairs with **[edc](https://github.com/jjuanrivvera/edc)**, which injects external events into those
+sessions as turns. Together they're the **mesh**.
+
+> 📖 **Full documentation → <https://jjuanrivvera.github.io/presence/>**
+
+The registry is a read-mostly blackboard (choreography, not orchestration): sessions write their own row,
+a reader queries and decides.
 
 ## Architecture
 

@@ -1,3 +1,6 @@
 presence
 dist/
 *.db
+
+# mkdocs build output
+site/
