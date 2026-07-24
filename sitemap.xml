@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/agents/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/agents/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/architecture/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/architecture/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/commands/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/commands/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/edc/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/edc/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/presence/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/plexus/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://jjuanrivvera.github.io/presence/setup/</loc>
+         <loc>https://jjuanrivvera.github.io/plexus/setup/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
 </urlset>
