@@ -19,7 +19,7 @@
 | Flag | Effect |
 |---|---|
 | `[dir]` | working directory (default: cwd); the session name is the repo basename |
-| `--detach` | create the session without attaching — background / companions |
+| `--detach` | create the session without attaching — background / headless agents |
 | `-- <args…>` | pass the rest to the agent, e.g. `-- --dangerously-skip-permissions` |
 
 `dir` defaults to the current directory; re-running for a dir that's already open **reattaches** instead
@@ -34,7 +34,7 @@ presence register   [--session-id ID] [--agent claude|codex|opencode] [--inject-
 presence heartbeat  [--session-id ID] [--state busy|idle|blocked]
 presence deregister [--session-id ID]
 presence list       [--host H] [--repo R] [--agent A] [--fresh 2m] [-o json|table]
-presence get        --repo R [--host mac,pc] [--agent A] [--fresh 2m] [-o json]
+presence get        --repo R [--host laptop,server] [--agent A] [--fresh 2m] [-o json]
 presence watch      [-n 2]
 presence prune      [--older-than 10m]
 presence launch     <claude|codex|opencode> [dir] [--detach] [-- args…]

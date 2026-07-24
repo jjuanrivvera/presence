@@ -17,7 +17,7 @@ open the cockpit locally. No VPN, no second box.
 
 !!! info "The one networking rule"
     `presence serve` refuses to listen on `0.0.0.0` — it needs an explicit private address. On one machine
-    that's `127.0.0.1`; across machines it's whatever your VPN or LAN assigns. That's why a tailnet slots in
+    that's `127.0.0.1`; across machines it's whatever your VPN or LAN assigns. That's why a VPN slots in
     so naturally (a stable private IP per machine), but it's interchangeable.
 
 ## Install
@@ -41,7 +41,7 @@ Config resolves **flag → env var → `~/.config/presence/env`** (and `~/.confi
 
 ```sh
 # ~/.config/presence/env — every machine
-PRESENCE_URL=http://<hub-address>:<port>   # the registry (e.g. http://127.0.0.1:8799 for one machine)
+PRESENCE_URL=http://<registry-host>:<port>   # the registry (e.g. http://127.0.0.1:8799 for one machine)
 PRESENCE_TOKEN=<shared-secret>             # bearer + cockpit login + terminal proxy auth
 PRESENCE_HOST=<label>                      # this machine's label, e.g. laptop
 ```
@@ -53,13 +53,13 @@ PRESENCE_HOST=<label>                      # this machine's label, e.g. laptop
 
 Generate secrets with `openssl rand -hex 32`. Keep them out of version control.
 
-## Run the hub
+## Run the registry
 
 On the always-on host, run `presence serve` as a service. A systemd user unit:
 
 ```ini
 [Service]
-Environment=PRESENCE_BIND=127.0.0.1:8799     # or a tailnet IP:port for multi-machine
+Environment=PRESENCE_BIND=127.0.0.1:8799     # or a private IP:port for multi-machine
 Environment=PRESENCE_TOKEN=<secret>
 ExecStart=%h/.local/bin/presence serve
 Restart=always

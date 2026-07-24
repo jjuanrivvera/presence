@@ -7,14 +7,14 @@ The mesh is two layers over one private network: **presence** (observe / control
 
 ```mermaid
 flowchart TB
-  subgraph net["private network (e.g. a tailnet)"]
-    subgraph mac["Mac — interactive"]
+  subgraph net["private network — a VPN, a LAN, or one machine"]
+    subgraph m1["a dev machine"]
       A1["agent session"]
     end
-    subgraph pc["PC — companions"]
+    subgraph m2["another machine"]
       A2["agent session"]
     end
-    subgraph vps["VPS — the hub (always on)"]
+    subgraph host["an always-on host"]
       SRV["presence serve<br/>SQLite registry + /ui cockpit"]
     end
   end
@@ -25,12 +25,12 @@ flowchart TB
   You["you — any device"] --> SRV
 ```
 
-- The **registry** runs on one always-on host (the "hub"). Every machine's agents register into it.
+- The **registry** runs on one always-on host. Every machine's agents register into it.
 - The **cockpit** (`/ui`) and each session's **web terminal** are reachable from any device on the network.
 - **edc** runs alongside each injectable session, exposing a local `/inject` endpoint.
 
-None of {a specific VPN, a VPS, a Mac} is required — see [Setup → Requirements](setup.md#requirements). On a
-single machine the whole thing runs on `127.0.0.1`.
+None of it is fixed to a particular VPN, host type, or OS — see [Setup → Requirements](setup.md#requirements).
+On a single machine the whole thing runs on `127.0.0.1`.
 
 ## How the two tools compose
 
@@ -64,7 +64,7 @@ Everything the mesh knows about a session is one row:
 | Field | Meaning |
 |---|---|
 | `session_id` | stable id (the agent's own session id) |
-| `host` | machine label (`mac` / `pc` / `vps` / …) |
+| `host` | machine label (`laptop` / `server` / …) |
 | `agent` | `claude` \| `codex` \| `opencode` |
 | `repo` · `branch` · `repo_path` | what it's working on |
 | `state` | `busy` \| `idle` \| `blocked` |

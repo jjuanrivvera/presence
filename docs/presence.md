@@ -5,8 +5,8 @@ SQLite registry. It is the mesh's *eyes and hands*: see every session, attach to
 
 ## Role 1 — Registry
 
-`presence serve` runs the HTTP service on the hub (Tailscale/loopback only, bearer-authed). It keeps one
-row per session and auto-prunes stale ones.
+`presence serve` runs the HTTP service on the always-on host (a private address or loopback only,
+bearer-authed). It keeps one row per session and auto-prunes stale ones.
 
 **Client verbs** (run from any machine, usually by hooks — not by hand):
 
@@ -20,7 +20,7 @@ row per session and auto-prunes stale ones.
 | `watch` | a live full-screen cockpit in the terminal |
 | `prune` | drop rows older than a duration |
 
-`get` is the handoff primitive: `presence get --repo api --host mac,pc -o json` returns the freshest
+`get` is the handoff primitive: `presence get --repo api --host laptop,server -o json` returns the freshest
 session for a repo along with its inject port, so a router — or another agent — can deliver work
 deterministically.
 
@@ -52,7 +52,7 @@ mesh kill api                    # end the session
 mesh ls                          # the fleet
 ```
 
-- **`--detach`** creates the session headless (background / companions): `mesh claude --detach ~/x`.
+- **`--detach`** creates the session headless (background / headless agents): `mesh claude --detach ~/x`.
 - **Re-running `mesh claude <same dir>` reattaches** instead of starting a second agent.
 - Sessions **persist** across a closed terminal; only exiting the agent or `mesh kill` ends them.
 
@@ -81,7 +81,7 @@ terminal's state file on any re-register — so a live, attachable session never
 ## Security
 
 - **Perimeter:** bind to a private address only — the server refuses `0.0.0.0`. Loopback for one machine,
-  a VPN/tailnet IP for many.
+  a VPN or LAN address for many.
 - **Auth:** one shared token (`PRESENCE_TOKEN`), constant-time compared; the same token is the cockpit
   login and the terminal proxy credential.
 - **Terminals** are never exposed directly — only through the authenticated `/attach` proxy.
