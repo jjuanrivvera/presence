@@ -929,8 +929,8 @@
 <p>A single Go binary — installed as both <code>presence</code> and <code>mesh</code> — that plays three roles over one shared
 SQLite registry. It is the mesh's <em>eyes and hands</em>: see every session, attach to it, launch new ones.</p>
 <h2 id="role-1-registry">Role 1 — Registry<a class="headerlink" href="#role-1-registry" title="Permanent link">&para;</a></h2>
-<p><code>presence serve</code> runs the HTTP service on the hub (Tailscale/loopback only, bearer-authed). It keeps one
-row per session and auto-prunes stale ones.</p>
+<p><code>presence serve</code> runs the HTTP service on the always-on host (a private address or loopback only,
+bearer-authed). It keeps one row per session and auto-prunes stale ones.</p>
 <p><strong>Client verbs</strong> (run from any machine, usually by hooks — not by hand):</p>
 <table>
 <thead>
@@ -970,7 +970,7 @@ row per session and auto-prunes stale ones.</p>
 </tr>
 </tbody>
 </table>
-<p><code>get</code> is the handoff primitive: <code>presence get --repo api --host mac,pc -o json</code> returns the freshest
+<p><code>get</code> is the handoff primitive: <code>presence get --repo api --host laptop,server -o json</code> returns the freshest
 session for a repo along with its inject port, so a router — or another agent — can deliver work
 deterministically.</p>
 <h2 id="role-2-cockpit">Role 2 — Cockpit<a class="headerlink" href="#role-2-cockpit" title="Permanent link">&para;</a></h2>
@@ -997,7 +997,7 @@ the session survives closing the terminal and is reachable from any machine.</p>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>mesh<span class="w"> </span>ls<span class="w">                          </span><span class="c1"># the fleet</span>
 </code></pre></div>
 <ul>
-<li><strong><code>--detach</code></strong> creates the session headless (background / companions): <code>mesh claude --detach ~/x</code>.</li>
+<li><strong><code>--detach</code></strong> creates the session headless (background / headless agents): <code>mesh claude --detach ~/x</code>.</li>
 <li><strong>Re-running <code>mesh claude &lt;same dir&gt;</code> reattaches</strong> instead of starting a second agent.</li>
 <li>Sessions <strong>persist</strong> across a closed terminal; only exiting the agent or <code>mesh kill</code> ends them.</li>
 </ul>
@@ -1020,7 +1020,7 @@ terminal's state file on any re-register — so a live, attachable session never
 <h2 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Perimeter:</strong> bind to a private address only — the server refuses <code>0.0.0.0</code>. Loopback for one machine,
-  a VPN/tailnet IP for many.</li>
+  a VPN or LAN address for many.</li>
 <li><strong>Auth:</strong> one shared token (<code>PRESENCE_TOKEN</code>), constant-time compared; the same token is the cockpit
   login and the terminal proxy credential.</li>
 <li><strong>Terminals</strong> are never exposed directly — only through the authenticated <code>/attach</code> proxy.</li>

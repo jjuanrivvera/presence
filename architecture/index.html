@@ -908,14 +908,14 @@
 (inject). Each agent session sits in the middle — registered in presence, reachable by edc.</p>
 <h2 id="topology">Topology<a class="headerlink" href="#topology" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
-  subgraph net["private network (e.g. a tailnet)"]
-    subgraph mac["Mac — interactive"]
+  subgraph net["private network — a VPN, a LAN, or one machine"]
+    subgraph m1["a dev machine"]
       A1["agent session"]
     end
-    subgraph pc["PC — companions"]
+    subgraph m2["another machine"]
       A2["agent session"]
     end
-    subgraph vps["VPS — the hub (always on)"]
+    subgraph host["an always-on host"]
       SRV["presence serve&lt;br/&gt;SQLite registry + /ui cockpit"]
     end
   end
@@ -925,12 +925,12 @@
   SRV --&gt;|reverse-proxy attach| A2
   You["you — any device"] --&gt; SRV</code></pre>
 <ul>
-<li>The <strong>registry</strong> runs on one always-on host (the "hub"). Every machine's agents register into it.</li>
+<li>The <strong>registry</strong> runs on one always-on host. Every machine's agents register into it.</li>
 <li>The <strong>cockpit</strong> (<code>/ui</code>) and each session's <strong>web terminal</strong> are reachable from any device on the network.</li>
 <li><strong>edc</strong> runs alongside each injectable session, exposing a local <code>/inject</code> endpoint.</li>
 </ul>
-<p>None of {a specific VPN, a VPS, a Mac} is required — see <a href="../setup/#requirements">Setup → Requirements</a>. On a
-single machine the whole thing runs on <code>127.0.0.1</code>.</p>
+<p>None of it is fixed to a particular VPN, host type, or OS — see <a href="../setup/#requirements">Setup → Requirements</a>.
+On a single machine the whole thing runs on <code>127.0.0.1</code>.</p>
 <h2 id="how-the-two-tools-compose">How the two tools compose<a class="headerlink" href="#how-the-two-tools-compose" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -990,7 +990,7 @@ single machine the whole thing runs on <code>127.0.0.1</code>.</p>
 </tr>
 <tr>
 <td><code>host</code></td>
-<td>machine label (<code>mac</code> / <code>pc</code> / <code>vps</code> / …)</td>
+<td>machine label (<code>laptop</code> / <code>server</code> / …)</td>
 </tr>
 <tr>
 <td><code>agent</code></td>

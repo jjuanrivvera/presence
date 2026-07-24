@@ -759,10 +759,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-the-hub" class="md-nav__link">
+  <a href="#run-the-registry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run the hub
+        Run the registry
       
     </span>
   </a>
@@ -884,10 +884,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#run-the-hub" class="md-nav__link">
+  <a href="#run-the-registry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Run the hub
+        Run the registry
       
     </span>
   </a>
@@ -969,7 +969,7 @@ open the cockpit locally. No VPN, no second box.</p>
 <div class="admonition info">
 <p class="admonition-title">The one networking rule</p>
 <p><code>presence serve</code> refuses to listen on <code>0.0.0.0</code> — it needs an explicit private address. On one machine
-that's <code>127.0.0.1</code>; across machines it's whatever your VPN or LAN assigns. That's why a tailnet slots in
+that's <code>127.0.0.1</code>; across machines it's whatever your VPN or LAN assigns. That's why a VPN slots in
 so naturally (a stable private IP per machine), but it's interchangeable.</p>
 </div>
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
@@ -985,7 +985,7 @@ so naturally (a stable private IP per machine), but it's interchangeable.</p>
 <h2 id="configure">Configure<a class="headerlink" href="#configure" title="Permanent link">&para;</a></h2>
 <p>Config resolves <strong>flag → env var → <code>~/.config/presence/env</code></strong> (and <code>~/.config/edc/config.json</code> for edc).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># ~/.config/presence/env — every machine</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">PRESENCE_URL</span><span class="o">=</span>http://&lt;hub-address&gt;:&lt;port&gt;<span class="w">   </span><span class="c1"># the registry (e.g. http://127.0.0.1:8799 for one machine)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">PRESENCE_URL</span><span class="o">=</span>http://&lt;registry-host&gt;:&lt;port&gt;<span class="w">   </span><span class="c1"># the registry (e.g. http://127.0.0.1:8799 for one machine)</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">PRESENCE_TOKEN</span><span class="o">=</span>&lt;shared-secret&gt;<span class="w">             </span><span class="c1"># bearer + cockpit login + terminal proxy auth</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">PRESENCE_HOST</span><span class="o">=</span>&lt;label&gt;<span class="w">                      </span><span class="c1"># this machine&#39;s label, e.g. laptop</span>
 </code></pre></div>
@@ -993,10 +993,10 @@ so naturally (a stable private IP per machine), but it's interchangeable.</p>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span><span class="w"> </span><span class="nt">&quot;inject_secret&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;secret&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;inject_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="w"> </span><span class="p">}</span>
 </code></pre></div>
 <p>Generate secrets with <code>openssl rand -hex 32</code>. Keep them out of version control.</p>
-<h2 id="run-the-hub">Run the hub<a class="headerlink" href="#run-the-hub" title="Permanent link">&para;</a></h2>
+<h2 id="run-the-registry">Run the registry<a class="headerlink" href="#run-the-registry" title="Permanent link">&para;</a></h2>
 <p>On the always-on host, run <code>presence serve</code> as a service. A systemd user unit:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">[Service]</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="na">Environment</span><span class="o">=</span><span class="s">PRESENCE_BIND=127.0.0.1:8799</span><span class="w">     </span><span class="c1"># or a tailnet IP:port for multi-machine</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="na">Environment</span><span class="o">=</span><span class="s">PRESENCE_BIND=127.0.0.1:8799</span><span class="w">     </span><span class="c1"># or a private IP:port for multi-machine</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="na">Environment</span><span class="o">=</span><span class="s">PRESENCE_TOKEN=&lt;secret&gt;</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">%h/.local/bin/presence serve</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="na">Restart</span><span class="o">=</span><span class="s">always</span>
