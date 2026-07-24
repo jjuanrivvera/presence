@@ -23,8 +23,8 @@ func TestParseEnvFile(t *testing.T) {
 		},
 		{
 			name:    "comments and blanks skipped",
-			content: "# mesh config\n\nPRESENCE_HOST=mac\n# PRESENCE_HOST=pc\n",
-			want:    map[string]string{"PRESENCE_HOST": "mac"},
+			content: "# presence config\n\nPRESENCE_HOST=host-a\n# PRESENCE_HOST=host-b\n",
+			want:    map[string]string{"PRESENCE_HOST": "host-a"},
 		},
 		{
 			name:    "quoted values unquoted",

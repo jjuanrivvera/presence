@@ -5,6 +5,13 @@ it event-driven: an external system POSTs an event and it lands as a **turn** in
 
 The shape is deliberately simple: **one agnostic emitter, one adapter per agent.**
 
+!!! tip "edc works on its own — you don't need the rest of Plexus"
+    `edc` is a **standalone binary**. It does not need `presence`, the registry, the cockpit, tmux, or
+    ttyd. Drop `edc` onto any machine and you can wake a single Claude / Codex / OpenCode session with
+    external events — nothing else required. `presence` and `edc` are **independent tools**: use either
+    alone, or both together. When both are present, `edc`'s daemon *also* self-registers its session into
+    `presence` so it appears in the cockpit — but that's a convenience, not a dependency.
+
 ## The emitter — `POST /inject`
 
 A tool (a cron, a watcher, another agent) sends the same JSON to a local, token-authed endpoint. The
@@ -49,7 +56,7 @@ The listener **fails closed**: no `EDC_INJECT_SECRET`, no listener. The port is 
       self-registers.
     - **TUI mode** (`EDC_OPENCODE_TUI=1` + `EDC_OPENCODE_URL`) — attaches to a shared server and types each
       event into the *attached* session via `/tui/append-prompt` + `/tui/submit-prompt`, so the human
-      **sees** the injected turn. This is what `mesh opencode` wires up automatically.
+      **sees** the injected turn. This is what `plexus opencode` wires up automatically.
 
 See [Agents](agents.md) for the full per-agent matrix.
 
@@ -72,11 +79,11 @@ point.
 
 ## Deploying an injectable session
 
-Interactive agents launched with [`mesh`](presence.md#role-3-launcher-mesh) become injectable automatically:
+Interactive agents launched with [`plexus`](presence.md#role-3-launcher-plexus) become injectable automatically:
 
 - **Claude** — the channel MCP is loaded as a plugin; the session's `inject_port` is registered.
 - **Codex** — run the `edc codex serve` daemon, or launch interactive and let the plugin register.
-- **OpenCode** — `mesh opencode` runs a decoupled stack (an addressable `opencode serve` + a TUI-mode
+- **OpenCode** — `plexus opencode` runs a decoupled stack (an addressable `opencode serve` + a TUI-mode
   `edc` sidecar + the `opencode attach` you see), so the interactive session is attachable **and**
   injectable.
 

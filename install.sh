@@ -61,10 +61,10 @@ fi
 tar -xzf "$TMP/$ASSET" -C "$TMP"
 mkdir -p "$INSTALL_DIR"
 install -m 0755 "$TMP/presence" "$INSTALL_DIR/presence"
-# `mesh` is the ergonomic alias for the same binary (mesh claude [dir], mesh ls, …).
-ln -sf presence "$INSTALL_DIR/mesh"
+# `plexus` is the ergonomic alias for the same binary (plexus claude [dir], plexus ls, …).
+ln -sf presence "$INSTALL_DIR/plexus"
 
-echo "Installed $("$INSTALL_DIR/presence" version) to $INSTALL_DIR/presence (+ mesh symlink)"
+echo "Installed $("$INSTALL_DIR/presence" version) to $INSTALL_DIR/presence (+ plexus symlink)"
 case ":$PATH:" in
   *":$INSTALL_DIR:"*) ;;
   *) echo "NOTE: $INSTALL_DIR is not in your PATH" ;;

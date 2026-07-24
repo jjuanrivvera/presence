@@ -1,14 +1,14 @@
 // ttyd.go — per-session web-terminal (ttyd) lifecycle, folded into the presence
-// binary so there is a single versioned artifact for the whole mesh (no bash
+// binary so there is a single versioned artifact for all of Plexus (no bash
 // script to drift between machines — the exact failure mode that once 404'd a
-// PC session whose mesh-ttyd copy was stale).
+// session whose standalone ttyd wrapper had gone stale).
 //
 //	presence ttyd spawn <session-id> <tmux-session> [socket]
 //	presence ttyd kill  <session-id>
 //	presence ttyd reap
 //
 // ttyd binds the Tailscale IP only (the tailnet is the perimeter) and requires
-// basic auth (mesh:$PRESENCE_TOKEN); it also runs with base-path
+// basic auth (plexus:$PRESENCE_TOKEN); it also runs with base-path
 // /attach/<session-id> so the presence server can reverse-proxy it without
 // rewriting asset/WebSocket paths. Fail-soft everywhere.
 package main
@@ -40,7 +40,7 @@ func ttydStateDir() string {
 	return filepath.Join(home, ".local", "state", "presence", "ttyd")
 }
 
-// lookTool resolves an executable, falling back to the dirs the mesh installs
+// lookTool resolves an executable, falling back to the dirs Plexus installs
 // into when a Claude Code hook's PATH is minimal.
 func lookTool(name string) string {
 	if p, err := exec.LookPath(name); err == nil {
@@ -237,11 +237,11 @@ func ttydSpawn(sid, tsess, sock string) {
 	}
 	tok := client.Resolve("", "PRESENCE_TOKEN", client.ParseEnvFile(client.EnvFilePath()))
 	if tok == "" {
-		tok = "mesh"
+		tok = "plexus"
 	}
 	args := []string{
 		"-p", strconv.Itoa(port), "-i", ip, "-W",
-		"-c", "mesh:" + tok,
+		"-c", "plexus:" + tok,
 		"-b", "/attach/" + sid,
 		"-t", "disableLeaveAlert=true",
 		"-t", ttydFontSize,

@@ -246,7 +246,7 @@ func SessionID(flagVal string) (string, error) {
 }
 
 // HostLabel resolves the machine label: PRESENCE_HOST (flag/env/env-file) or,
-// as an out-of-mesh fallback only, the hostname lowercased and truncated at
+// as an out-of-Plexus fallback only, the hostname lowercased and truncated at
 // the first dot (MacBook-Pro.local -> macbook-pro).
 func HostLabel(resolved string) string {
 	if resolved != "" {

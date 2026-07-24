@@ -189,7 +189,7 @@ func (s *Server) handleAttach(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	host := row.AttachAddr
-	basic := "Basic " + base64.StdEncoding.EncodeToString([]byte("mesh:"+s.token))
+	basic := "Basic " + base64.StdEncoding.EncodeToString([]byte("plexus:"+s.token))
 	proxy := &httputil.ReverseProxy{
 		FlushInterval: -1, // stream terminal output as it arrives
 		Director: func(req *http.Request) {
@@ -304,7 +304,7 @@ func (s *Server) handleHeartbeat(w http.ResponseWriter, r *http.Request) {
 		req.State = "busy"
 	}
 	// "blocked" = the session is waiting on human input (a permission prompt / a question).
-	// It is the highest-signal state: it tells the mesh which session needs you right now.
+	// It is the highest-signal state: it tells Plexus which session needs you right now.
 	if req.State != "busy" && req.State != "idle" && req.State != "blocked" {
 		writeErr(w, http.StatusBadRequest, "state: must be busy, idle, or blocked")
 		return

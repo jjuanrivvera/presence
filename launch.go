@@ -1,13 +1,13 @@
 // launch.go — start an agent inside a named tmux session so it is attachable
 // from the cockpit, and reattach to one. This is the anti-drift piece: instead
 // of sessions being started ad-hoc (some in tmux, some not, on random sockets),
-// `presence launch` always creates a session on the shared `mesh` socket, which
+// `presence launch` always creates a session on the shared `plexus` socket, which
 // the SessionStart hook then wires for attach automatically.
 //
-//	presence launch <claude|codex> [dir] [--detach] [-- args…]
+//	presence launch <claude|codex|opencode> [dir] [--detach] [--worktree] [-- args…]
 //	presence attach <name>
 //
-// Ergonomic aliases (also via the `mesh` symlink): `mesh claude [dir]`.
+// Ergonomic aliases (also via the `plexus` symlink): `plexus claude [dir]`.
 package main
 
 import (
@@ -19,9 +19,10 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"time"
 )
 
-const meshSocket = "mesh"
+const plexusSocket = "plexus"
 
 func freeTCPPort() int {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -44,7 +45,7 @@ func opencodeWrapCmd(ocBin, dir string, extra []string) []string {
 	edcBin := lookTool("edc")
 	p, ep := freeTCPPort(), freeTCPPort()
 	var sb strings.Builder
-	// Export the inject port BEFORE `opencode serve` so the server — which runs the mesh plugin —
+	// Export the inject port BEFORE `opencode serve` so the server — which runs the Plexus plugin —
 	// inherits it and the plugin registers the session with inject_port=EP (not 0). Order matters:
 	// the plugin lives in the server process, not in the later `opencode attach`.
 	if edcBin != "" {
@@ -90,6 +91,38 @@ func sessionName(dir string) string {
 	return name
 }
 
+// makeWorktree creates a fresh git worktree + branch for dir's repo so a session gets its own
+// isolated checkout — no cross-agent filesystem/branch collisions. The worktree lives under
+// ~/.local/state/plexus/worktrees/ (outside the repo, so it never pollutes the working tree).
+// Requires dir to be inside a git repo. Returns the worktree path.
+func makeWorktree(dir, agent string) (string, error) {
+	git := lookTool("git")
+	if git == "" {
+		return "", fmt.Errorf("git not found")
+	}
+	c := exec.Command(git, "rev-parse", "--show-toplevel")
+	c.Dir = dir
+	out, err := c.Output()
+	if err != nil {
+		return "", fmt.Errorf("%q is not inside a git repo (--worktree needs one)", dir)
+	}
+	top := strings.TrimSpace(string(out))
+	home, _ := os.UserHomeDir()
+	suffix := time.Now().Format("0102-150405")
+	name := filepath.Base(top) + "-" + agent + "-" + suffix
+	wt := filepath.Join(home, ".local", "state", "plexus", "worktrees", name)
+	branch := "plexus/" + agent + "-" + suffix
+	if err := os.MkdirAll(filepath.Dir(wt), 0o755); err != nil {
+		return "", err
+	}
+	add := exec.Command(git, "-C", top, "worktree", "add", "-b", branch, wt)
+	add.Stdout, add.Stderr = os.Stderr, os.Stderr
+	if err := add.Run(); err != nil {
+		return "", fmt.Errorf("git worktree add: %w", err)
+	}
+	return wt, nil
+}
+
 // execTmuxAttach replaces this process with `tmux attach`, dropping the user into
 // the session. $TMUX is stripped so a launch from inside another tmux is not refused.
 func execTmuxAttach(sock, name string) {
@@ -103,9 +136,9 @@ func execTmuxAttach(sock, name string) {
 }
 
 func cmdLaunch(args []string) {
-	// args[0] is the agent; then optional [dir], [--detach], and [-- extra…].
+	// args[0] is the agent; then optional [dir], [--detach], [--worktree], and [-- extra…].
 	var agent, dir string
-	var detach bool
+	var detach, worktree bool
 	var extra []string
 	for i := 0; i < len(args); i++ {
 		a := args[i]
@@ -115,6 +148,8 @@ func cmdLaunch(args []string) {
 			i = len(args)
 		case a == "--detach" || a == "-d":
 			detach = true
+		case a == "--worktree" || a == "-w":
+			worktree = true
 		case agent == "":
 			agent = a
 		case dir == "":
@@ -145,14 +180,25 @@ func cmdLaunch(args []string) {
 		fatal("launch: %q is not a directory", abs)
 	}
 
+	// --worktree: give this session its own isolated git worktree + branch, so concurrent
+	// agents on the same repo can't collide. The session then runs in that worktree.
+	if worktree {
+		wt, err := makeWorktree(abs, agent)
+		if err != nil {
+			fatal("launch: %v", err)
+		}
+		abs = wt
+		fmt.Fprintf(os.Stderr, "worktree: %s\n", wt)
+	}
+
 	name := sessionName(abs)
 	// Already alive for this repo? Reattach (interactive) instead of duplicating.
-	if tmuxHasSession(meshSocket, name) {
+	if tmuxHasSession(plexusSocket, name) {
 		if detach {
-			fmt.Printf("already running: %s (socket %s)\n", name, meshSocket)
+			fmt.Printf("already running: %s (socket %s)\n", name, plexusSocket)
 			return
 		}
-		execTmuxAttach(meshSocket, name)
+		execTmuxAttach(plexusSocket, name)
 		return
 	}
 
@@ -167,7 +213,7 @@ func cmdLaunch(args []string) {
 		sessCmd = opencodeWrapCmd(agentBin, abs, extra)
 	}
 	// -e PRESENCE_AGENT so the session registers with the right kind (claude|codex|opencode).
-	tmArgs := append([]string{"-L", meshSocket, "new-session", "-d", "-s", name,
+	tmArgs := append([]string{"-L", plexusSocket, "new-session", "-d", "-s", name,
 		"-e", "PRESENCE_AGENT=" + agent, "-c", abs}, sessCmd...)
 	create := exec.Command(tm, tmArgs...)
 	create.Stdout, create.Stderr = os.Stderr, os.Stderr
@@ -176,39 +222,39 @@ func cmdLaunch(args []string) {
 	}
 
 	if detach {
-		fmt.Printf("▸ %s · %s in tmux -L %s · attachable from the cockpit in ~2s\n", name, agent, meshSocket)
+		fmt.Printf("▸ %s · %s in tmux -L %s · attachable from the cockpit in ~2s\n", name, agent, plexusSocket)
 		return
 	}
-	execTmuxAttach(meshSocket, name)
+	execTmuxAttach(plexusSocket, name)
 }
 
 func cmdAttach(args []string) {
 	name := argAt(args, 0)
 	if name == "" {
-		fatal("attach: need a session name (see `presence ls`)")
+		fatal("attach: need a session name (see `plexus ls`)")
 	}
-	if !tmuxHasSession(meshSocket, name) {
-		fatal("attach: no live mesh session %q", name)
+	if !tmuxHasSession(plexusSocket, name) {
+		fatal("attach: no live plexus session %q", name)
 	}
-	execTmuxAttach(meshSocket, name)
+	execTmuxAttach(plexusSocket, name)
 }
 
-// cmdKill ends a mesh session by name: kills the tmux session (which terminates
+// cmdKill ends a plexus session by name: kills the tmux session (which terminates
 // the agent) and reaps its now-orphaned web terminal. The presence row clears on
 // the session's own SessionEnd, or is pruned once it goes stale.
 func cmdKill(args []string) {
 	name := argAt(args, 0)
 	if name == "" {
-		fatal("kill: need a session name (see `mesh ls`)")
+		fatal("kill: need a session name (see `plexus ls`)")
 	}
-	if !tmuxHasSession(meshSocket, name) {
-		fatal("kill: no live mesh session %q", name)
+	if !tmuxHasSession(plexusSocket, name) {
+		fatal("kill: no live plexus session %q", name)
 	}
 	tm := lookTool("tmux")
 	if tm == "" {
 		fatal("tmux not found")
 	}
-	if err := exec.Command(tm, "-L", meshSocket, "kill-session", "-t", name).Run(); err != nil {
+	if err := exec.Command(tm, "-L", plexusSocket, "kill-session", "-t", name).Run(); err != nil {
 		fatal("kill: %v", err)
 	}
 	ttydReap() // drop the ttyd whose tmux session just went away

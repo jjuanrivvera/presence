@@ -1,4 +1,4 @@
-// presence — session registry for the ambient mesh.
+// presence — the registry engine of Plexus.
 //
 // One binary: `presence serve` runs the HTTP service (VPS); the other
 // subcommands (register/heartbeat/deregister/list/get/prune) are the client,
@@ -62,7 +62,7 @@ func main() {
 	case "launch":
 		cmdLaunch(args)
 	case "claude", "codex", "opencode":
-		// ergonomic alias: `mesh claude [dir]` == `presence launch claude [dir]`
+		// ergonomic alias: `plexus claude [dir]` == `presence launch claude [dir]`
 		cmdLaunch(append([]string{cmd}, args...))
 	case "attach":
 		cmdAttach(args)
@@ -82,7 +82,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprint(os.Stderr, `presence — session registry for the ambient mesh
+	fmt.Fprint(os.Stderr, `presence — the registry engine of Plexus
 
 Usage:
   presence serve      [--bind ADDR] [--db PATH] [--ttl 300s]
@@ -90,16 +90,16 @@ Usage:
   presence heartbeat  [--session-id ID] [--state busy|idle]
   presence deregister [--session-id ID]
   presence list       [--host H] [--repo R] [--agent A] [--fresh 2m] [-o json|table]
-  presence watch      [-n 2]     # live full-screen mesh cockpit (blocked-first, colored)
+  presence watch      [-n 2]     # live full-screen Plexus cockpit (blocked-first, colored)
   presence get        --repo R [--host mac,pc] [--fresh 2m] [-o json]
   presence prune      [--older-than 10m]
   presence launch     <claude|codex|opencode> [dir] [--detach] [-- args…]   # start agent in tmux, attachable
-  presence attach     <name>     # reattach to a mesh session (also: mesh claude [dir])
-  presence kill       <name>     # end a mesh session (kills the agent + its terminal)
+  presence attach     <name>     # reattach to a Plexus session (also: plexus claude [dir])
+  presence kill       <name>     # end a Plexus session (kills the agent + its terminal)
   presence ttyd       spawn <sid> <tmux-session> [socket] | kill <sid> | reap
   presence version
 
-Installed as "mesh" too: mesh claude [dir], mesh ls, mesh attach NAME.
+Installed as "plexus" too: plexus claude [dir], plexus ls, plexus attach NAME.
 
 Config precedence: flag > env var > ~/.config/presence/env
 Keys: PRESENCE_URL, PRESENCE_TOKEN, PRESENCE_HOST (client); PRESENCE_BIND, PRESENCE_TTL (serve)

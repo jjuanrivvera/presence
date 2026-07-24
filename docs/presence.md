@@ -1,7 +1,7 @@
 # presence
 
-A single Go binary — installed as both `presence` and `mesh` — that plays three roles over one shared
-SQLite registry. It is the mesh's *eyes and hands*: see every session, attach to it, launch new ones.
+A single Go binary — installed as both `presence` and `plexus` — that plays three roles over one shared
+SQLite registry. It is Plexus's *eyes and hands*: see every session, attach to it, launch new ones.
 
 ## Role 1 — Registry
 
@@ -37,28 +37,28 @@ the right, the **live terminal** of the selected session.
   interrupt — mirrored with whatever else is attached.
 - **Mobile.** On a phone it's master → detail: tap a session, get its full-screen terminal, back to the list.
 
-## Role 3 — Launcher (`mesh`)
+## Role 3 — Launcher (`plexus`)
 
-`mesh` is the same binary. It starts an agent inside a **named tmux session** on a shared `mesh` socket, so
+`plexus` is the same binary. It starts an agent inside a **named tmux session** on a shared `plexus` socket, so
 the session survives closing the terminal and is reachable from any machine.
 
 ```sh
-mesh claude ~/code/api           # drop into an attachable claude session
-mesh codex  ~/code/api           # same, for codex
-mesh opencode ~/code/api         # decoupled stack — attachable AND injectable
+plexus claude ~/code/api           # drop into an attachable claude session
+plexus codex  ~/code/api           # same, for codex
+plexus opencode ~/code/api         # decoupled stack — attachable AND injectable
 
-mesh attach api                  # reattach (or click it in the cockpit)
-mesh kill api                    # end the session
-mesh ls                          # the fleet
+plexus attach api                  # reattach (or click it in the cockpit)
+plexus kill api                    # end the session
+plexus ls                          # the fleet
 ```
 
-- **`--detach`** creates the session headless (background / headless agents): `mesh claude --detach ~/x`.
-- **Re-running `mesh claude <same dir>` reattaches** instead of starting a second agent.
-- Sessions **persist** across a closed terminal; only exiting the agent or `mesh kill` ends them.
+- **`--detach`** creates the session headless (background / headless agents): `plexus claude --detach ~/x`.
+- **Re-running `plexus claude <same dir>` reattaches** instead of starting a second agent.
+- Sessions **persist** across a closed terminal; only exiting the agent or `plexus kill` ends them.
 
 See [Command reference](commands.md) for every flag.
 
-## How a session joins the mesh
+## How a session joins Plexus
 
 Every agent goes through the **same two calls** — `presence ttyd spawn` (the web terminal) and
 `presence register` — only *where* they're wired differs. That's what keeps the cockpit agent-agnostic.
@@ -67,7 +67,7 @@ Every agent goes through the **same two calls** — `presence ttyd spawn` (the w
 flowchart LR
   S["session-start<br/>(hook / plugin)"] --> T["presence ttyd spawn<br/>web terminal in tmux"]
   T --> R["presence register<br/>host · repo · inject_port · attach_addr"]
-  R --> L["live in the mesh"]
+  R --> L["live in Plexus"]
   L --> E["session-end → deregister<br/>+ reap orphan terminals"]
 ```
 

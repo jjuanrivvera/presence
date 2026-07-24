@@ -19,7 +19,7 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
-  // Live or proxied endpoints always hit the network — never cache the mesh view, the
+  // Live or proxied endpoints always hit the network — never cache the Plexus view, the
   // login, or a session's web terminal.
   if (url.pathname === "/list" || url.pathname === "/login" || url.pathname.startsWith("/attach/")) return;
   // Shell HTML: network-first so deploys show up immediately; fall back to cache offline.

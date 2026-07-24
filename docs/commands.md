@@ -1,20 +1,20 @@
 # Command reference
 
-## `mesh` — launch & attach
+## `plexus` — launch & attach
 
-`mesh` is a symlink to `presence`; these are the ergonomic verbs.
+`plexus` is a symlink to `presence`; these are the ergonomic verbs.
 
 | Command | Does |
 |---|---|
-| `mesh claude [dir]` | launch Claude Code in a tmux session on the `mesh` socket, and attach |
-| `mesh codex [dir]` | same, for Codex |
-| `mesh opencode [dir]` | same, for OpenCode (decoupled stack: attachable **and** injectable) |
-| `mesh attach <name>` | reattach to a running mesh session |
-| `mesh kill <name>` | end a mesh session (kills the agent + its web terminal) |
-| `mesh ls` | list live sessions (alias of `presence list`) |
-| `mesh watch` | live full-screen cockpit in the terminal |
+| `plexus claude [dir]` | launch Claude Code in a tmux session on the `plexus` socket, and attach |
+| `plexus codex [dir]` | same, for Codex |
+| `plexus opencode [dir]` | same, for OpenCode (decoupled stack: attachable **and** injectable) |
+| `plexus attach <name>` | reattach to a running plexus session |
+| `plexus kill <name>` | end a session (kills the agent + its web terminal) |
+| `plexus ls` | list live sessions (alias of `presence list`) |
+| `plexus watch` | live full-screen cockpit in the terminal |
 
-**Launcher flags** (`mesh <agent> …`):
+**Launcher flags** (`plexus <agent> …`):
 
 | Flag | Effect |
 |---|---|
@@ -77,9 +77,9 @@ curl -X POST "http://127.0.0.1:$PORT/inject" \
   -d '{"source":"cron","event":"nightly","text":"run the report"}'
 ```
 
-## The `mesh` skill
+## The `plexus` skill
 
-Install the agent skill that teaches an agent to drive the mesh:
+Install the agent skill that teaches an agent to drive Plexus:
 
 ```sh
 npx skills add jjuanrivvera/presence          # into this project

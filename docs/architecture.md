@@ -1,6 +1,6 @@
 # Architecture
 
-The mesh is two layers over one private network: **presence** (observe / control / launch) and **edc**
+Plexus is two layers over one private network: **presence** (observe / control / launch) and **edc**
 (inject). Each agent session sits in the middle — registered in presence, reachable by edc.
 
 ## Topology
@@ -38,7 +38,7 @@ On a single machine the whole thing runs on `127.0.0.1`.
 |---|---|---|
 | Role | see, control, launch | feed events in as turns |
 | Direction | you → session (observe/steer) | event → session (stimulus) |
-| Surface | registry API, `/ui` cockpit, `mesh` launcher | `/inject` HTTP + per-agent adapters |
+| Surface | registry API, `/ui` cockpit, `plexus` launcher | `/inject` HTTP + per-agent adapters |
 | Knows about the agent? | only its *kind* (a chip + a filter) | yes — one adapter per agent |
 
 They meet at the **session**: edc injects a turn; presence lets you watch and steer that same session.
@@ -59,7 +59,7 @@ sequenceDiagram
 
 ## The registry row
 
-Everything the mesh knows about a session is one row:
+Everything Plexus knows about a session is one row:
 
 | Field | Meaning |
 |---|---|

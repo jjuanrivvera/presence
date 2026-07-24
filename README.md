@@ -1,15 +1,15 @@
 # presence
 
-**The mesh's eyes and hands.** One Go binary (installed as both `presence` and `mesh`) that does three
+**Plexus — the eyes and hands.** One Go binary (installed as both `presence` and `plexus`) that does three
 things for coding-agent sessions — Claude Code, Codex, or OpenCode — across your machines:
 
 - a **registry** — every session publishes its live state (repo, agent, state, inject port, attach
   address) to a tiny SQLite-backed HTTP service;
 - a **cockpit** — a web/PWA dashboard with each session's live terminal (view, type, interrupt);
-- a **launcher** — `mesh claude|codex|opencode [dir]` starts an attachable session in tmux.
+- a **launcher** — `plexus claude|codex|opencode [dir]` starts an attachable session in tmux.
 
 It pairs with **[edc](https://github.com/jjuanrivvera/edc)**, which injects external events into those
-sessions as turns. Together they're the **mesh**.
+sessions as turns. Together they are **Plexus**.
 
 > 📖 **Full documentation → <https://jjuanrivvera.github.io/presence/>**
 
@@ -47,9 +47,9 @@ overloading the session id.
   hooks (`agent=codex`). Interactive Codex sessions register with `inject_port=0` (visible but not
   an injection target); the `edc codex serve` daemon registers with a real inject port.
 - **OpenCode** sessions register via an OpenCode plugin (ships in
-  [`edc`](https://github.com/jjuanrivvera/edc) at `.opencode-plugin/mesh.ts`, installed to
+  [`edc`](https://github.com/jjuanrivvera/edc) at `.opencode-plugin/plexus.ts`, installed to
   `~/.config/opencode/plugins/`) on the `session.created` event (`agent=opencode`) — the same
-  `presence ttyd spawn` + `presence register` wiring. `mesh opencode [dir]` launches a **decoupled
+  `presence ttyd spawn` + `presence register` wiring. `plexus opencode [dir]` launches a **decoupled
   stack** — an addressable `opencode serve` + a TUI-mode `edc` sidecar + the `opencode attach` the
   human sees — so the interactive session is both **attachable and injectable** (`edc /inject`
   events land visibly in the TUI). `edc opencode serve` alone is the standalone headless daemon.
@@ -123,7 +123,7 @@ itself (`KEY=VALUE` lines, `#` comments) — hooks don't depend on your shell so
 ```sh
 # ~/.config/presence/env (all machines)
 PRESENCE_URL=http://<server-address>:8799
-PRESENCE_TOKEN=<shared mesh secret>
+PRESENCE_TOKEN=<shared Plexus secret>
 PRESENCE_HOST=<this-machine-label>
 PRESENCE_AGENT=claude          # or codex, per the agent running on this machine
 # server only:
@@ -131,7 +131,7 @@ PRESENCE_BIND=<private-address>:8799   # an explicit private address, never 0.0.
 PRESENCE_TTL=300s
 ```
 
-The token is a shared secret of the mesh (the private overlay is the perimeter); it lives on each
+The token is a shared secret of Plexus (the private overlay is the perimeter); it lives on each
 machine, never in the store. `serve` fails closed if the token is unset.
 
 ## Claude Code hooks
@@ -179,8 +179,8 @@ From source: `go build -o presence .` (Go 1.25+, `CGO_ENABLED=0`).
 
 ## Claude Code skill
 
-The repo ships a `mesh` skill (`skills/mesh/SKILL.md`) that teaches an agent to
-drive the mesh — list/launch/attach/kill sessions, the cockpit, scripting the
+The repo ships a `plexus` skill (`skills/plexus/SKILL.md`) that teaches an agent to
+drive Plexus — list/launch/attach/kill sessions, the cockpit, scripting the
 registry. Install it into a project (or globally) with the skills manager:
 
 ```sh
@@ -194,7 +194,7 @@ systemd user unit at `~/.config/systemd/user/presence.service`:
 
 ```ini
 [Unit]
-Description=presence — ambient mesh session registry
+Description=presence — Plexus session registry
 After=network-online.target
 
 [Service]

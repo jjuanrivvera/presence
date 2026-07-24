@@ -1,0 +1,8 @@
+{
+  "name": "plexus",
+  "version": "0.1.0",
+  "description": "Plexus — presence (registry/cockpit/launcher) + edc (event injection), wired into one Claude Code plugin: registration + web terminal via hooks, injection via the edc channel, plus the plexus skill.",
+  "author": {
+    "name": "Juan Felipe Rivera"
+  }
+}

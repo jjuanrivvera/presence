@@ -24,16 +24,61 @@ open the cockpit locally. No VPN, no second box.
 
 Both tools are single static Go binaries with checksum-verified releases.
 
+### Both at once (recommended)
+
+`plexus.sh` installs `presence` and `edc`, drops the `plexus` symlink, and scaffolds
+config for both (generating a registry token and an inject secret the first time):
+
 ```sh
-# presence (also installs the `mesh` symlink)
+curl -fsSL https://raw.githubusercontent.com/jjuanrivvera/presence/main/plexus.sh | sh
+```
+
+It never overwrites an existing config, so it's safe to re-run to upgrade.
+
+### One at a time
+
+The two binaries are independent — install only what you need:
+
+```sh
+# presence (registry + cockpit + launcher; also installs the `plexus` symlink)
 curl -fsSL https://raw.githubusercontent.com/jjuanrivvera/presence/main/install.sh | sh
 
-# edc
+# edc (event injection — usable entirely on its own, no presence required)
 curl -fsSL https://raw.githubusercontent.com/jjuanrivvera/edc/main/install.sh | sh
 ```
 
 `ttyd` (for the web terminal) is a single static binary from its
 [releases](https://github.com/tsl0922/ttyd/releases); `tmux` from your package manager.
+Neither is needed for `edc` injection on its own.
+
+## One plugin, both tools
+
+Plexus ships **a single Claude Code plugin** that wires both binaries into a session at once:
+
+- **registration** (hooks → `presence`): the session publishes itself into the registry and
+  spawns its web terminal on start, keeps its state fresh, and deregisters on exit;
+- **injection** (channel → `edc`): the session gets a local `/inject` endpoint so external
+  events arrive as turns.
+
+It also bundles the `plexus` skill. Install and enable it:
+
+```sh
+claude plugin marketplace add jjuanrivvera/presence
+claude plugin install plexus@jjuanrivvera-plexus
+```
+
+Then allow the injection channel by adding it to `allowedChannelPlugins` in your Claude
+settings (`~/.claude/settings.json`) — `plexus.sh` prints the exact snippet:
+
+```json
+{ "allowedChannelPlugins": [ { "marketplace": "jjuanrivvera-plexus", "plugin": "plexus" } ] }
+```
+
+!!! note "Codex & OpenCode"
+    **Codex** has its own equivalent plugin in the `edc` repo (`.codex-plugin/` — registration
+    hooks + the injection adapter). **OpenCode** isn't a plugin: drop
+    `edc/.opencode-plugin/plexus.ts` into `~/.config/opencode/plugins/` and launch decoupled
+    (see [OpenCode](agents.md#opencode)).
 
 ## Configure
 
@@ -68,12 +113,12 @@ Restart=always
 Then, on any dev machine, launch an agent and it appears in the cockpit at `PRESENCE_URL/ui`:
 
 ```sh
-mesh claude ~/code/api
+plexus claude ~/code/api
 ```
 
 ## Portability
 
-`mesh` is designed for **one developer with a handful of long-lived sessions across machines they own**.
+`plexus` is designed for **one developer with a handful of long-lived sessions across machines they own**.
 The design generalizes; the implementation is a solo-to-small-team reference.
 
 | Audience | Fit | What to change |

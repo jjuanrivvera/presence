@@ -1,6 +1,6 @@
 package main
 
-// Human-facing rendering for the mesh cockpit: a colored, blocked-first table (shared by
+// Human-facing rendering for the Plexus cockpit: a colored, blocked-first table (shared by
 // `list` and `watch`) and the live `watch` TUI. Read-only — it only queries the server.
 
 import (
@@ -164,7 +164,7 @@ func renderTable(rows []store.Session, color bool) string {
 	return b.String()
 }
 
-// cmdWatch is the live TUI: a full-screen, auto-refreshing view of the whole mesh. Read-only.
+// cmdWatch is the live TUI: a full-screen, auto-refreshing view of the whole fleet. Read-only.
 func cmdWatch(args []string) {
 	fs := flag.NewFlagSet("watch", flag.ExitOnError)
 	interval := fs.Int("n", 2, "refresh interval seconds")
@@ -189,7 +189,7 @@ func cmdWatch(args []string) {
 			return
 		}
 		if len(rows) == 0 {
-			fmt.Printf("  %sno sessions in the mesh%s\n", cDim, cReset)
+			fmt.Printf("  %sno sessions%s\n", cDim, cReset)
 			return
 		}
 		b, wk, id := counts(rows)

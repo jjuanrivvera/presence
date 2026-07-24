@@ -1,18 +1,18 @@
 ---
-name: mesh
+name: plexus
 description: >-
-  Operate the presence "mesh" — a cross-machine registry, launcher, and web
+  Operate the presence "plexus" — a cross-machine registry, launcher, and web
   cockpit for coding-agent (Claude Code / Codex) sessions. Use to see which
   agents are running and their state, launch a session in a directory, reattach
   to or kill a session, hand work to another session, or point a human at the
-  live cockpit. Triggers: "mesh ls", "what sessions are running", "which agents
+  live cockpit. Triggers: "plexus ls", "what sessions are running", "which agents
   are busy/idle/blocked", "launch claude/codex in <dir>", "attach to <session>",
-  "kill the mesh session", "the cockpit", "presence list/get".
+  "kill the plexus session", "the cockpit", "presence list/get".
 ---
 
-# mesh
+# plexus
 
-`mesh` (a symlink to the `presence` binary) is one tool for a fleet of
+`plexus` (a symlink to the `presence` binary) is one tool for a fleet of
 coding-agent sessions spread across machines. It does three things:
 
 1. **Registry** — every session self-registers (host, agent, repo, state,
@@ -32,38 +32,38 @@ PRESENCE_TOKEN=<shared-secret>               # bearer + web login + terminal aut
 PRESENCE_HOST=<label>                        # this machine's label (e.g. laptop)
 ```
 
-Check it works: `mesh ls`. If it errors on `PRESENCE_URL`/`PRESENCE_TOKEN`,
+Check it works: `plexus ls`. If it errors on `PRESENCE_URL`/`PRESENCE_TOKEN`,
 those aren't set.
 
 ## Everyday commands
 
 | Command | What it does |
 | --- | --- |
-| `mesh ls` | List live sessions (host · agent · repo · state · attach). Add `-o json` to script it, `--agent codex` / `--host <h>` to filter. |
-| `mesh watch` | Full-screen live TUI of the fleet (blocked-first, auto-refresh). |
-| `mesh claude [dir]` | Launch Claude Code inside a tmux session named after the repo, and drop you into it. Attachable everywhere. |
-| `mesh codex [dir]` | Same, for Codex. |
-| `mesh attach <name>` | Reattach to a running session (also `tmux -L mesh attach -t <name>`). |
-| `mesh kill <name>` | End a session — kills the agent and its terminal. |
+| `plexus ls` | List live sessions (host · agent · repo · state · attach). Add `-o json` to script it, `--agent codex` / `--host <h>` to filter. |
+| `plexus watch` | Full-screen live TUI of the fleet (blocked-first, auto-refresh). |
+| `plexus claude [dir]` | Launch Claude Code inside a tmux session named after the repo, and drop you into it. Attachable everywhere. |
+| `plexus codex [dir]` | Same, for Codex. |
+| `plexus attach <name>` | Reattach to a running session (also `tmux -L plexus attach -t <name>`). |
+| `plexus kill <name>` | End a session — kills the agent and its terminal. |
 
 Launcher details:
 
 - **`dir` defaults to the current directory.** The session name is the git repo
   basename (or the dir basename).
 - **`--detach`** creates the session without attaching — for background /
-  headless agents: `mesh claude --detach <dir> -- <agent-args>`.
+  headless agents: `plexus claude --detach <dir> -- <agent-args>`.
 - **`--`** passes the rest through to the agent, e.g. skip an interactive
   first-run trust prompt in a fresh directory:
-  `mesh claude --detach <dir> -- --dangerously-skip-permissions`.
-- **Re-running `mesh claude <same-dir>` reattaches** instead of starting a
+  `plexus claude --detach <dir> -- --dangerously-skip-permissions`.
+- **Re-running `plexus claude <same-dir>` reattaches** instead of starting a
   second agent.
 
 ## Sessions persist
 
-Agents launched with `mesh` run in a detached-capable tmux server (its own
+Agents launched with `plexus` run in a detached-capable tmux server (its own
 socket), so **closing the terminal only detaches you — the session keeps
-running.** Reattach with `mesh attach <name>`, from another machine, or via the
-cockpit. Only exiting the agent from inside (or `mesh kill`) ends it.
+running.** Reattach with `plexus attach <name>`, from another machine, or via the
+cockpit. Only exiting the agent from inside (or `plexus kill`) ends it.
 
 ## The cockpit
 
@@ -74,7 +74,7 @@ right — you can type turns and send an interrupt. States are color-coded:
 
 ## Scripting the registry
 
-- `mesh ls -o json` — the full fleet as JSON.
+- `plexus ls -o json` — the full fleet as JSON.
 - `presence get --repo <R> [--host a,b] [--agent codex] -o json` — the freshest
   *injectable* session for a repo (exit 1 + empty when none). Use this to find
   where a repo is already open before starting a new session, or to discover a
@@ -84,12 +84,12 @@ right — you can type turns and send an interrupt. States are color-coded:
 
 ## When to use
 
-- **"What's running / who's stuck?"** → `mesh ls` (or `mesh watch`, or the cockpit).
-- **Start or resume work in a repo** → `mesh claude <dir>` (reattaches if it's
+- **"What's running / who's stuck?"** → `plexus ls` (or `plexus watch`, or the cockpit).
+- **Start or resume work in a repo** → `plexus claude <dir>` (reattaches if it's
   already open there).
 - **Hand off / delegate** → `presence get --repo <R>` to find the target
   session, then reach it via its inject port.
-- **Clean up** → `mesh kill <name>`.
+- **Clean up** → `plexus kill <name>`.
 
 ## Notes
 

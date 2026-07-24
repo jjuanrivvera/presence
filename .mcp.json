@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "plexus-channel": {
+      "command": "edc"
+    }
+  }
+}

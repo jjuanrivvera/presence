@@ -1,15 +1,15 @@
 # Agents
 
-The mesh is agent-agnostic by design: every agent goes through the same two presence calls and the same
+Plexus is agent-agnostic by design: every agent goes through the same two presence calls and the same
 `/inject` contract. What differs is *where* registration is wired and *how* the injected turn is received.
 
 ## Support matrix
 
 | Capability | Claude Code | Codex | OpenCode |
 |---|:---:|:---:|:---:|
-| Register in the mesh | ✅ hook | ✅ plugin | ✅ plugin |
+| Register in Plexus | ✅ hook | ✅ plugin | ✅ plugin |
 | Live terminal (attach) | ✅ | ✅ | ✅ |
-| Launch via `mesh` | ✅ | ✅ | ✅ decoupled |
+| Launch via `plexus` | ✅ | ✅ | ✅ decoupled |
 | External turn injection | ✅ channel | ✅ app-server | ✅ HTTP |
 | Injected turn is **visible** | ✅ native | ✅ | ✅ TUI mode |
 | Native `source=system` marker | ✅ | framed¹ | framed¹ |
@@ -40,10 +40,10 @@ agent has no native system marker.
 
 ### OpenCode
 
-- **Registration:** the `.opencode-plugin` shipped in `edc` (`mesh.ts` → `~/.config/opencode/plugins/`).
+- **Registration:** the `.opencode-plugin` shipped in `edc` (`plexus.ts` → `~/.config/opencode/plugins/`).
   On `session.created` it runs `presence ttyd spawn` + `presence register` (`agent=opencode`), reading the
   inject port from `$EDC_INJECT_PORT`.
-- **Injection:** `edc opencode serve`. OpenCode is client-server, so `mesh opencode` launches a **decoupled
+- **Injection:** `edc opencode serve`. OpenCode is client-server, so `plexus opencode` launches a **decoupled
   stack** — an addressable `opencode serve`, a TUI-mode `edc` sidecar on a fixed inject port, and the
   `opencode attach` you interact with. Injected turns are typed into the attached session via `/tui/*` so
   they render (working around

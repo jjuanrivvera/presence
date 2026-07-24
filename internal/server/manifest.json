@@ -1,7 +1,7 @@
 {
-  "name": "presence — mesh cockpit",
-  "short_name": "mesh",
-  "description": "Live view of your coding-agent mesh: which agents are working, idle, or blocked and waiting on you.",
+  "name": "Plexus cockpit",
+  "short_name": "plexus",
+  "description": "Live view of your Plexus fleet: which agents are working, idle, or blocked and waiting on you.",
   "start_url": "/ui",
   "scope": "/",
   "display": "standalone",

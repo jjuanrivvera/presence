@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jjuanrivvera-plexus",
+  "description": "Plexus — see, launch, attach, and inject coding-agent sessions across your machines.",
+  "owner": {
+    "name": "Juan Felipe Rivera"
+  },
+  "plugins": [
+    {
+      "name": "plexus",
+      "description": "One plugin that wires both Plexus tools into a Claude Code session: registers it in the presence registry and spawns its web terminal (hooks → `presence`), and makes it injectable by external events (channel → `edc /inject`). Bundles the `plexus` skill. Requires the `presence` and `edc` binaries on PATH (see plexus.sh).",
+      "author": {
+        "name": "Juan Felipe Rivera"
+      },
+      "category": "productivity",
+      "source": "."
+    }
+  ]
+}

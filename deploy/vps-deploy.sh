@@ -23,7 +23,7 @@ printf 'PRESENCE_URL=http://%s\nPRESENCE_TOKEN=%s\nPRESENCE_HOST=server\nPRESENC
 chmod 600 ~/.config/presence/env
 cat > ~/.config/systemd/user/presence.service <<'UNIT'
 [Unit]
-Description=presence — ambient mesh session registry
+Description=presence — Plexus session registry
 After=network-online.target
 
 [Service]
