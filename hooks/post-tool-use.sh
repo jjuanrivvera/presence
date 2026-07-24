@@ -31,7 +31,7 @@ BIN="$HOME/.local/bin/presence"
 [ -x "$BIN" ] || BIN="$(command -v presence 2>/dev/null)"
 [ -n "$BIN" ] || exit 0
 
-STATE_DIR="$HOME/.local/state/presence"
+STATE_DIR="$HOME/.local/state/plexus"
 mkdir -p "$STATE_DIR" 2>/dev/null || exit 0
 LAST_FILE="$STATE_DIR/last-hb-${CLAUDE_SESSION_ID:-default}"
 

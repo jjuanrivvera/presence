@@ -1,8 +1,8 @@
 site_name: Plexus
-site_description: A registry, cockpit, and event-injection layer for coding-agent sessions across your machines — presence + edc.
-site_url: https://jjuanrivvera.github.io/presence/
-repo_url: https://github.com/jjuanrivvera/presence
-repo_name: jjuanrivvera/presence
+site_description: A registry, cockpit, and event-injection layer for coding-agent sessions across your machines — plexus + edc.
+site_url: https://jjuanrivvera.github.io/plexus/
+repo_url: https://github.com/jjuanrivvera/plexus
+repo_name: jjuanrivvera/plexus
 edit_uri: edit/main/docs/
 
 theme:
@@ -60,7 +60,7 @@ nav:
       - Architecture: architecture.md
       - Agents: agents.md
   - Tools:
-      - presence: presence.md
+      - plexus: plexus.md
       - edc: edc.md
   - Guides:
       - Setup & requirements: setup.md

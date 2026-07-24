@@ -8,7 +8,7 @@ import (
 
 func openTestStore(t *testing.T) *Store {
 	t.Helper()
-	st, err := Open(filepath.Join(t.TempDir(), "presence.db"))
+	st, err := Open(filepath.Join(t.TempDir(), "plexus.db"))
 	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}

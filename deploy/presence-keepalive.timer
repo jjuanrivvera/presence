@@ -1,5 +1,5 @@
 [Unit]
-Description=presence keepalive cada 2 min
+Description=plexus keepalive cada 2 min
 
 [Timer]
 OnBootSec=45s

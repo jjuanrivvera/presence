@@ -1,5 +1,5 @@
 #!/bin/sh
-# Claude Code SessionStart hook: register this session in presence.
+# Claude Code SessionStart hook: register this session in plexus.
 # Silent and fail-soft: never block or break the session.
 # Claude Code manda session_id en el JSON por stdin (no como env var).
 SID=$(python3 -c "import sys,json;print(json.load(sys.stdin).get('session_id',''))" 2>/dev/null)
@@ -30,14 +30,14 @@ EDCP=$(discover_edc_port)
 
 # Web-terminal attach: if this session runs inside tmux, spawn a per-session ttyd and
 # advertise its address so the cockpit can attach (view live + type + ESC). The ttyd
-# lifecycle now lives in the presence binary (`presence ttyd`), which derives the tmux
+# lifecycle now lives in the plexus binary (`plexus ttyd`), which derives the tmux
 # socket from $TMUX. Fail-soft.
 PBIN="$HOME/.local/bin/presence"; [ -x "$PBIN" ] || PBIN="$(command -v presence 2>/dev/null)"
 if [ -n "${TMUX:-}" ] && [ -n "$PBIN" ] && [ -n "${CLAUDE_SESSION_ID:-}" ] && command -v tmux >/dev/null 2>&1; then
   TSESS=$(tmux display-message -p '#S' 2>/dev/null)
   if [ -n "$TSESS" ]; then
     ADDR=$("$PBIN" ttyd spawn "$CLAUDE_SESSION_ID" "$TSESS" 2>/dev/null)
-    [ -n "$ADDR" ] && export PRESENCE_ATTACH_ADDR="$ADDR"
+    [ -n "$ADDR" ] && export PLEXUS_ATTACH_ADDR="$ADDR"
   fi
 fi
 
@@ -55,7 +55,7 @@ if [ -n "${CLAUDE_SESSION_ID:-}" ]; then
     P=$(ps -o ppid= -p "$P" 2>/dev/null | tr -d ' '); [ -n "$P" ] || break; i=$((i+1))
   done
   [ -n "$CPID" ] || CPID=$PPID
-  SDIR="$HOME/.local/state/presence/sessions"
+  SDIR="$HOME/.local/state/plexus/sessions"
   mkdir -p "$SDIR" 2>/dev/null && printf '%s\n%s\n%s\n' "$CPID" "$(pwd)" "${EDC_INJECT_PORT:-}" > "$SDIR/$CLAUDE_SESSION_ID" 2>/dev/null
 fi
 exit 0

@@ -1,11 +1,11 @@
-# presence
+# plexus
 
-A single Go binary — installed as both `presence` and `plexus` — that plays three roles over one shared
+A single Go binary — installed as `plexus` — that plays three roles over one shared
 SQLite registry. It is Plexus's *eyes and hands*: see every session, attach to it, launch new ones.
 
 ## Role 1 — Registry
 
-`presence serve` runs the HTTP service on the always-on host (a private address or loopback only,
+`plexus serve` runs the HTTP service on the always-on host (a private address or loopback only,
 bearer-authed). It keeps one row per session and auto-prunes stale ones.
 
 **Client verbs** (run from any machine, usually by hooks — not by hand):
@@ -20,7 +20,7 @@ bearer-authed). It keeps one row per session and auto-prunes stale ones.
 | `watch` | a live full-screen cockpit in the terminal |
 | `prune` | drop rows older than a duration |
 
-`get` is the handoff primitive: `presence get --repo api --host laptop,server -o json` returns the freshest
+`get` is the handoff primitive: `plexus get --repo api --host laptop,server -o json` returns the freshest
 session for a repo along with its inject port, so a router — or another agent — can deliver work
 deterministically.
 
@@ -31,7 +31,7 @@ the right, the **live terminal** of the selected session.
 
 - **One login.** You paste the token once; it's stored as a cookie.
 - **Attach without a second prompt.** Each session runs a per-session [`ttyd`](https://github.com/tsl0922/ttyd)
-  web terminal. Presence **reverse-proxies** it at `/attach/<session_id>/`, injecting the terminal's own
+  web terminal. Plexus **reverse-proxies** it at `/attach/<session_id>/`, injecting the terminal's own
   basic-auth — so you never see a second prompt and the terminal is never exposed raw on the network.
 - **View, type, interrupt.** The embedded terminal is the real tmux session: type a turn, or send `esc` to
   interrupt — mirrored with whatever else is attached.
@@ -60,13 +60,13 @@ See [Command reference](commands.md) for every flag.
 
 ## How a session joins Plexus
 
-Every agent goes through the **same two calls** — `presence ttyd spawn` (the web terminal) and
-`presence register` — only *where* they're wired differs. That's what keeps the cockpit agent-agnostic.
+Every agent goes through the **same two calls** — `plexus ttyd spawn` (the web terminal) and
+`plexus register` — only *where* they're wired differs. That's what keeps the cockpit agent-agnostic.
 
 ```mermaid
 flowchart LR
-  S["session-start<br/>(hook / plugin)"] --> T["presence ttyd spawn<br/>web terminal in tmux"]
-  T --> R["presence register<br/>host · repo · inject_port · attach_addr"]
+  S["session-start<br/>(hook / plugin)"] --> T["plexus ttyd spawn<br/>web terminal in tmux"]
+  T --> R["plexus register<br/>host · repo · inject_port · attach_addr"]
   R --> L["live in Plexus"]
   L --> E["session-end → deregister<br/>+ reap orphan terminals"]
 ```
@@ -82,7 +82,7 @@ terminal's state file on any re-register — so a live, attachable session never
 
 - **Perimeter:** bind to a private address only — the server refuses `0.0.0.0`. Loopback for one machine,
   a VPN or LAN address for many.
-- **Auth:** one shared token (`PRESENCE_TOKEN`), constant-time compared; the same token is the cockpit
+- **Auth:** one shared token (`PLEXUS_TOKEN`), constant-time compared; the same token is the cockpit
   login and the terminal proxy credential.
 - **Terminals** are never exposed directly — only through the authenticated `/attach` proxy.
 

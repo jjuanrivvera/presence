@@ -1,5 +1,5 @@
 {
-  "description": "Plexus registration hooks: publish this session into the presence registry, spawn its web terminal, keep its state fresh, and deregister on exit.",
+  "description": "Plexus registration hooks: publish this session into the plexus registry, spawn its web terminal, keep its state fresh, and deregister on exit.",
   "hooks": {
     "SessionStart": [
       {

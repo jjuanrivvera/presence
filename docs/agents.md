@@ -1,6 +1,6 @@
 # Agents
 
-Plexus is agent-agnostic by design: every agent goes through the same two presence calls and the same
+Plexus is agent-agnostic by design: every agent goes through the same two plexus calls and the same
 `/inject` contract. What differs is *where* registration is wired and *how* the injected turn is received.
 
 ## Support matrix
@@ -22,11 +22,11 @@ agent has no native system marker.
 
 ### Claude Code
 
-- **Registration:** hooks in `presence/hooks/` — `session-start.sh` runs `presence ttyd spawn` +
-  `presence register` (`agent=claude`); `session-end.sh` deregisters; a keepalive heartbeats idle sessions.
+- **Registration:** hooks in `plexus/hooks/` — `session-start.sh` runs `plexus ttyd spawn` +
+  `plexus register` (`agent=claude`); `session-end.sh` deregisters; a keepalive heartbeats idle sessions.
 - **Injection:** the `edc` **channel** — an MCP stdio server declaring `claude/channel`. Events arrive as
   native `notifications/claude/channel` turns with `meta.source="system"`.
-- **Install:** the `event-driven-claude` plugin (`claude plugin install …`) and the presence hooks in
+- **Install:** the `event-driven-claude` plugin (`claude plugin install …`) and the plexus hooks in
   `settings.json`.
 
 ### Codex
@@ -41,7 +41,7 @@ agent has no native system marker.
 ### OpenCode
 
 - **Registration:** the `.opencode-plugin` shipped in `edc` (`plexus.ts` → `~/.config/opencode/plugins/`).
-  On `session.created` it runs `presence ttyd spawn` + `presence register` (`agent=opencode`), reading the
+  On `session.created` it runs `plexus ttyd spawn` + `plexus register` (`agent=opencode`), reading the
   inject port from `$EDC_INJECT_PORT`.
 - **Injection:** `edc opencode serve`. OpenCode is client-server, so `plexus opencode` launches a **decoupled
   stack** — an addressable `opencode serve`, a TUI-mode `edc` sidecar on a fixed inject port, and the
@@ -54,10 +54,10 @@ agent has no native system marker.
 
 The pattern to support a new agent:
 
-1. **Register** it — a session-start hook/plugin that calls `presence ttyd spawn` + `presence register
-   --agent <name>` (and a session-end that deregisters). `presence` accepts any lowercase agent name.
+1. **Register** it — a session-start hook/plugin that calls `plexus ttyd spawn` + `plexus register
+   --agent <name>` (and a session-end that deregisters). `plexus` accepts any lowercase agent name.
 2. **Receive** injection — an `edc <name> serve` adapter that runs the `/inject` listener and translates
    each event into that agent's "start a turn" primitive, reconstructing the trust boundary if the agent
    has no native system marker.
 
-`presence` needs no change to add an agent — only a hook and an adapter.
+`plexus` needs no change to add an agent — only a hook and an adapter.

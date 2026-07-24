@@ -1,4 +1,4 @@
-// Package store persists session presence rows in SQLite (pure Go, no cgo).
+// Package store persists session plexus rows in SQLite (pure Go, no cgo).
 package store
 
 import (
@@ -30,7 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_host      ON sessions(host);
 CREATE INDEX IF NOT EXISTS idx_sessions_last_seen ON sessions(last_seen);
 `
 
-// Session is one presence row. JSON field names match the column names.
+// Session is one plexus row. JSON field names match the column names.
 type Session struct {
 	SessionID  string `json:"session_id"`
 	Host       string `json:"host"`

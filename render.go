@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jjuanrivvera/presence/internal/store"
+	"github.com/jjuanrivvera/plexus/internal/store"
 )
 
 const (
@@ -182,7 +182,7 @@ func cmdWatch(args []string) {
 	draw := func() {
 		rows, err := cc.cli.List("", "", "", "2m")
 		fmt.Print("\033[H\033[2J") // cursor home + clear screen
-		fmt.Printf("%spresence — the herd%s   %s   %s(refresh %ds · ctrl-c quits)%s\n\n",
+		fmt.Printf("%splexus — the herd%s   %s   %s(refresh %ds · ctrl-c quits)%s\n\n",
 			cBold, cReset, time.Now().Format("15:04:05"), cDim, *interval, cReset)
 		if err != nil {
 			fmt.Printf("  %sserver unreachable: %v%s\n", cRed, err, cReset)

@@ -1,15 +1,15 @@
-// ttyd.go — per-session web-terminal (ttyd) lifecycle, folded into the presence
+// ttyd.go — per-session web-terminal (ttyd) lifecycle, folded into the plexus
 // binary so there is a single versioned artifact for all of Plexus (no bash
 // script to drift between machines — the exact failure mode that once 404'd a
 // session whose standalone ttyd wrapper had gone stale).
 //
-//	presence ttyd spawn <session-id> <tmux-session> [socket]
-//	presence ttyd kill  <session-id>
-//	presence ttyd reap
+//	plexus ttyd spawn <session-id> <tmux-session> [socket]
+//	plexus ttyd kill  <session-id>
+//	plexus ttyd reap
 //
 // ttyd binds the Tailscale IP only (the tailnet is the perimeter) and requires
-// basic auth (plexus:$PRESENCE_TOKEN); it also runs with base-path
-// /attach/<session-id> so the presence server can reverse-proxy it without
+// basic auth (plexus:$PLEXUS_TOKEN); it also runs with base-path
+// /attach/<session-id> so the plexus server can reverse-proxy it without
 // rewriting asset/WebSocket paths. Fail-soft everywhere.
 package main
 
@@ -24,7 +24,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jjuanrivvera/presence/internal/client"
+	"github.com/jjuanrivvera/plexus/internal/client"
 )
 
 const (
@@ -37,7 +37,7 @@ const (
 
 func ttydStateDir() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".local", "state", "presence", "ttyd")
+	return filepath.Join(home, ".local", "state", "plexus", "ttyd")
 }
 
 // lookTool resolves an executable, falling back to the dirs Plexus installs
@@ -120,7 +120,7 @@ func readTtydState(path string) (pid, port int, tsess, sock string, ok bool) {
 
 // attachAddrFromState reconstructs a session's web-terminal address from its ttyd
 // state file (tailscale-ip:port). This is the durable local truth: a re-register
-// that lost $PRESENCE_ATTACH_ADDR (e.g. the keepalive or a 404-recovery heartbeat,
+// that lost $PLEXUS_ATTACH_ADDR (e.g. the keepalive or a 404-recovery heartbeat,
 // which don't carry that env) can recover it here instead of wiping attach_addr.
 func attachAddrFromState(sid string) string {
 	if sid == "" {
@@ -235,7 +235,7 @@ func ttydSpawn(sid, tsess, sock string) {
 	if port == 0 {
 		return
 	}
-	tok := client.Resolve("", "PRESENCE_TOKEN", client.ParseEnvFile(client.EnvFilePath()))
+	tok := client.Resolve("", "PLEXUS_TOKEN", client.ParseEnvFile(client.EnvFilePath()))
 	if tok == "" {
 		tok = "plexus"
 	}

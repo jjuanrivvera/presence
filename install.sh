@@ -1,15 +1,15 @@
 #!/bin/sh
-# install.sh — install the presence binary from a GitHub release
+# install.sh — install the plexus binary from a GitHub release
 # (checksum-verified, no Go toolchain required).
 #
 # Usage:
 #   ./install.sh                 # latest release
 #   ./install.sh v0.2.0          # specific version
-#   PRESENCE_INSTALL_DIR=/usr/local/bin ./install.sh
+#   PLEXUS_INSTALL_DIR=/usr/local/bin ./install.sh
 set -eu
 
-REPO="jjuanrivvera/presence"
-INSTALL_DIR="${PRESENCE_INSTALL_DIR:-$HOME/.local/bin}"
+REPO="jjuanrivvera/plexus"
+INSTALL_DIR="${PLEXUS_INSTALL_DIR:-$HOME/.local/bin}"
 VERSION="${1:-}"
 
 err() { printf 'install.sh: %s\n' "$*" >&2; exit 1; }
@@ -36,7 +36,7 @@ case "$ARCH" in
   *) err "unsupported arch: $ARCH" ;;
 esac
 
-ASSET="presence_${VERSION_NO_V}_${OS}_${ARCH}.tar.gz"
+ASSET="plexus_${VERSION_NO_V}_${OS}_${ARCH}.tar.gz"
 BASE_URL="https://github.com/$REPO/releases/download/$VERSION"
 
 # --- download + verify checksum ----------------------------------------------
@@ -60,11 +60,12 @@ fi
 # --- install -----------------------------------------------------------------
 tar -xzf "$TMP/$ASSET" -C "$TMP"
 mkdir -p "$INSTALL_DIR"
-install -m 0755 "$TMP/presence" "$INSTALL_DIR/presence"
-# `plexus` is the ergonomic alias for the same binary (plexus claude [dir], plexus ls, …).
-ln -sf presence "$INSTALL_DIR/plexus"
+install -m 0755 "$TMP/plexus" "$INSTALL_DIR/plexus"
+# `presence` is a deprecated back-compat alias for the same binary, kept so hooks
+# and systemd units from before the rename keep resolving during migration.
+ln -sf plexus "$INSTALL_DIR/presence"
 
-echo "Installed $("$INSTALL_DIR/presence" version) to $INSTALL_DIR/presence (+ plexus symlink)"
+echo "Installed $("$INSTALL_DIR/plexus" version) to $INSTALL_DIR/plexus (+ presence back-compat symlink)"
 case ":$PATH:" in
   *":$INSTALL_DIR:"*) ;;
   *) echo "NOTE: $INSTALL_DIR is not in your PATH" ;;

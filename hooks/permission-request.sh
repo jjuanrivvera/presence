@@ -10,6 +10,6 @@
 SID=$(python3 -c "import sys,json;print(json.load(sys.stdin).get('session_id',''))" 2>/dev/null)
 [ -n "$SID" ] || exit 0
 if command -v presence >/dev/null 2>&1; then
-  presence heartbeat --session-id "$SID" --state blocked >/dev/null 2>&1 || true
+  plexus heartbeat --session-id "$SID" --state blocked >/dev/null 2>&1 || true
 fi
 exit 0

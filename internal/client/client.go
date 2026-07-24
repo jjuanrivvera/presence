@@ -1,4 +1,4 @@
-// Package client implements the presence HTTP client used by the CLI
+// Package client implements the plexus HTTP client used by the CLI
 // subcommands and the Claude Code hooks.
 package client
 
@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jjuanrivvera/presence/internal/store"
+	"github.com/jjuanrivvera/plexus/internal/store"
 )
 
 // Timeout is deliberately short: the hooks must never hang a Claude session.
@@ -245,7 +245,7 @@ func SessionID(flagVal string) (string, error) {
 	return id, nil
 }
 
-// HostLabel resolves the machine label: PRESENCE_HOST (flag/env/env-file) or,
+// HostLabel resolves the machine label: PLEXUS_HOST (flag/env/env-file) or,
 // as an out-of-Plexus fallback only, the hostname lowercased and truncated at
 // the first dot (MacBook-Pro.local -> macbook-pro).
 func HostLabel(resolved string) string {

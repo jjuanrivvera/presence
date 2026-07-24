@@ -1,4 +1,4 @@
-module github.com/jjuanrivvera/presence
+module github.com/jjuanrivvera/plexus
 
 go 1.25.5
 

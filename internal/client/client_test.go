@@ -18,13 +18,13 @@ func TestParseEnvFile(t *testing.T) {
 	}{
 		{
 			name:    "basic keys",
-			content: "PRESENCE_URL=http://127.0.0.1:8799\nPRESENCE_TOKEN=s3cret\n",
-			want:    map[string]string{"PRESENCE_URL": "http://127.0.0.1:8799", "PRESENCE_TOKEN": "s3cret"},
+			content: "PLEXUS_URL=http://127.0.0.1:8799\nPLEXUS_TOKEN=s3cret\n",
+			want:    map[string]string{"PLEXUS_URL": "http://127.0.0.1:8799", "PLEXUS_TOKEN": "s3cret"},
 		},
 		{
 			name:    "comments and blanks skipped",
-			content: "# presence config\n\nPRESENCE_HOST=host-a\n# PRESENCE_HOST=host-b\n",
-			want:    map[string]string{"PRESENCE_HOST": "host-a"},
+			content: "# plexus config\n\nPLEXUS_HOST=host-a\n# PLEXUS_HOST=host-b\n",
+			want:    map[string]string{"PLEXUS_HOST": "host-a"},
 		},
 		{
 			name:    "quoted values unquoted",
@@ -62,7 +62,7 @@ func TestParseEnvFile(t *testing.T) {
 }
 
 func TestResolvePrecedence(t *testing.T) {
-	envFile := map[string]string{"PRESENCE_TEST_KEY": "from-file"}
+	envFile := map[string]string{"PLEXUS_TEST_KEY": "from-file"}
 	tests := []struct {
 		name    string
 		flagVal string
@@ -76,11 +76,11 @@ func TestResolvePrecedence(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.envVal != "" {
-				t.Setenv("PRESENCE_TEST_KEY", tt.envVal)
+				t.Setenv("PLEXUS_TEST_KEY", tt.envVal)
 			} else {
-				t.Setenv("PRESENCE_TEST_KEY", "")
+				t.Setenv("PLEXUS_TEST_KEY", "")
 			}
-			if got := Resolve(tt.flagVal, "PRESENCE_TEST_KEY", envFile); got != tt.want {
+			if got := Resolve(tt.flagVal, "PLEXUS_TEST_KEY", envFile); got != tt.want {
 				t.Errorf("got %q, want %q", got, tt.want)
 			}
 		})

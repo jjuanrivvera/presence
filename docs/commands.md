@@ -2,7 +2,7 @@
 
 ## `plexus` — launch & attach
 
-`plexus` is a symlink to `presence`; these are the ergonomic verbs.
+`plexus` is the binary; these are the ergonomic verbs.
 
 | Command | Does |
 |---|---|
@@ -11,7 +11,7 @@
 | `plexus opencode [dir]` | same, for OpenCode (decoupled stack: attachable **and** injectable) |
 | `plexus attach <name>` | reattach to a running plexus session |
 | `plexus kill <name>` | end a session (kills the agent + its web terminal) |
-| `plexus ls` | list live sessions (alias of `presence list`) |
+| `plexus ls` | list live sessions (alias of `plexus list`) |
 | `plexus watch` | live full-screen cockpit in the terminal |
 
 **Launcher flags** (`plexus <agent> …`):
@@ -25,30 +25,30 @@
 `dir` defaults to the current directory; re-running for a dir that's already open **reattaches** instead
 of duplicating.
 
-## `presence` — registry & server
+## `plexus` — registry & server
 
 ```
-presence serve      [--bind ADDR] [--db PATH] [--ttl 300s]
-presence register   [--session-id ID] [--agent claude|codex|opencode] [--inject-port N]
+plexus serve      [--bind ADDR] [--db PATH] [--ttl 300s]
+plexus register   [--session-id ID] [--agent claude|codex|opencode] [--inject-port N]
                     [--attach-addr HOST:PORT] [--host LABEL]
-presence heartbeat  [--session-id ID] [--state busy|idle|blocked]
-presence deregister [--session-id ID]
-presence list       [--host H] [--repo R] [--agent A] [--fresh 2m] [-o json|table]
-presence get        --repo R [--host laptop,server] [--agent A] [--fresh 2m] [-o json]
-presence watch      [-n 2]
-presence prune      [--older-than 10m]
-presence launch     <claude|codex|opencode> [dir] [--detach] [-- args…]
-presence attach     <name>
-presence kill       <name>
-presence ttyd       spawn <sid> <tmux-session> [socket] | kill <sid> | reap
-presence version
+plexus heartbeat  [--session-id ID] [--state busy|idle|blocked]
+plexus deregister [--session-id ID]
+plexus list       [--host H] [--repo R] [--agent A] [--fresh 2m] [-o json|table]
+plexus get        --repo R [--host laptop,server] [--agent A] [--fresh 2m] [-o json]
+plexus watch      [-n 2]
+plexus prune      [--older-than 10m]
+plexus launch     <claude|codex|opencode> [dir] [--detach] [-- args…]
+plexus attach     <name>
+plexus kill       <name>
+plexus ttyd       spawn <sid> <tmux-session> [socket] | kill <sid> | reap
+plexus version
 ```
 
-`presence get` is the routing query: the freshest **injectable** session for a repo. Exit `1` + empty
+`plexus get` is the routing query: the freshest **injectable** session for a repo. Exit `1` + empty
 output when there's no match, so it scripts cleanly.
 
-**Server config** (`presence serve`): `PRESENCE_BIND`, `PRESENCE_TTL`, `PRESENCE_TOKEN`. **Client config:**
-`PRESENCE_URL`, `PRESENCE_TOKEN`, `PRESENCE_HOST`. Precedence: flag → env → `~/.config/presence/env`.
+**Server config** (`plexus serve`): `PLEXUS_BIND`, `PLEXUS_TTL`, `PLEXUS_TOKEN`. **Client config:**
+`PLEXUS_URL`, `PLEXUS_TOKEN`, `PLEXUS_HOST`. Precedence: flag → env → `~/.config/plexus/env`.
 
 ## `edc` — event injection
 
@@ -82,6 +82,6 @@ curl -X POST "http://127.0.0.1:$PORT/inject" \
 Install the agent skill that teaches an agent to drive Plexus:
 
 ```sh
-npx skills add jjuanrivvera/presence          # into this project
-npx skills add jjuanrivvera/presence --global # for all projects
+npx skills add jjuanrivvera/plexus          # into this project
+npx skills add jjuanrivvera/plexus --global # for all projects
 ```

@@ -6,11 +6,11 @@ it event-driven: an external system POSTs an event and it lands as a **turn** in
 The shape is deliberately simple: **one agnostic emitter, one adapter per agent.**
 
 !!! tip "edc works on its own — you don't need the rest of Plexus"
-    `edc` is a **standalone binary**. It does not need `presence`, the registry, the cockpit, tmux, or
+    `edc` is a **standalone binary**. It does not need `plexus`, the registry, the cockpit, tmux, or
     ttyd. Drop `edc` onto any machine and you can wake a single Claude / Codex / OpenCode session with
-    external events — nothing else required. `presence` and `edc` are **independent tools**: use either
+    external events — nothing else required. `plexus` and `edc` are **independent tools**: use either
     alone, or both together. When both are present, `edc`'s daemon *also* self-registers its session into
-    `presence` so it appears in the cockpit — but that's a convenience, not a dependency.
+    `plexus` so it appears in the cockpit — but that's a convenience, not a dependency.
 
 ## The emitter — `POST /inject`
 
@@ -31,7 +31,7 @@ curl -X POST "http://127.0.0.1:$PORT/inject" \
 | `text` | the payload the agent sees (required) |
 | `context` | optional key/values, namespaced into the turn |
 
-The listener **fails closed**: no `EDC_INJECT_SECRET`, no listener. The port is published into presence as
+The listener **fails closed**: no `EDC_INJECT_SECRET`, no listener. The port is published into plexus as
 `inject_port`, so an injectable session is discoverable exactly like any other.
 
 ## The receiver differs per agent
@@ -46,7 +46,7 @@ The listener **fails closed**: no `EDC_INJECT_SECRET`, no listener. The port is 
 
     `edc codex serve` fronts a long-lived `codex app-server` thread over JSON-RPC (NDJSON) and injects each
     event as a `turn/start`. It pins a non-interactive posture (approval never, read-only sandbox) and
-    **self-registers** in presence as `agent=codex` with its inject port.
+    **self-registers** in plexus as `agent=codex` with its inject port.
 
 === "OpenCode"
 
@@ -79,7 +79,7 @@ point.
 
 ## Deploying an injectable session
 
-Interactive agents launched with [`plexus`](presence.md#role-3-launcher-plexus) become injectable automatically:
+Interactive agents launched with [`plexus`](plexus.md#role-3-launcher-plexus) become injectable automatically:
 
 - **Claude** — the channel MCP is loaded as a plugin; the session's `inject_port` is registered.
 - **Codex** — run the `edc codex serve` daemon, or launch interactive and let the plugin register.
@@ -87,5 +87,5 @@ Interactive agents launched with [`plexus`](presence.md#role-3-launcher-plexus) 
   `edc` sidecar + the `opencode attach` you see), so the interactive session is attachable **and**
   injectable.
 
-To find where to inject, ask presence: `presence get --repo <R> -o json` returns the session and its
+To find where to inject, ask plexus: `plexus get --repo <R> -o json` returns the session and its
 `inject_port`.

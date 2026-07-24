@@ -1,4 +1,4 @@
-// Package server implements the presence HTTP service: auth middleware,
+// Package server implements the plexus HTTP service: auth middleware,
 // the six API routes plus /healthz and the /ui dashboard, and the auto-prune
 // timer.
 package server
@@ -18,13 +18,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jjuanrivvera/presence/internal/store"
+	"github.com/jjuanrivvera/plexus/internal/store"
 )
 
 // cookieName holds the bearer token for browser clients, which cannot set an
 // Authorization header on link navigations or WebSocket handshakes (both needed
 // to reach a session's web terminal through /attach). Set by POST /login.
-const cookieName = "presence_auth"
+const cookieName = "plexus_auth"
 
 // uiHTML is the live dashboard. It is static markup with no data baked in —
 // the page's own JS fetches /list with the bearer token, so serving it
@@ -118,7 +118,7 @@ func (s *Server) RunAutoPrune(ctx context.Context, interval time.Duration) {
 }
 
 // auth accepts the token from either "Authorization: Bearer <token>" (CLI clients)
-// or the presence_auth cookie (browsers, which can't set headers on link/WS
+// or the plexus_auth cookie (browsers, which can't set headers on link/WS
 // navigations). Compared constant-time, both sides hashed so length never leaks.
 func (s *Server) auth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -167,7 +167,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 // handleAttach reverse-proxies /attach/<session_id>/* to that session's ttyd web
 // terminal. It injects ttyd's basic-auth so the user authenticates once (the
-// presence login) and never sees ttyd's own prompt. The ttyd runs with base-path
+// plexus login) and never sees ttyd's own prompt. The ttyd runs with base-path
 // /attach/<session_id>, so request paths pass through unrewritten (assets + WS).
 func (s *Server) handleAttach(w http.ResponseWriter, r *http.Request) {
 	rest := strings.TrimPrefix(r.URL.Path, "/attach/")

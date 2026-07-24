@@ -14,7 +14,7 @@ func EnvFilePath() string {
 	if err != nil {
 		return ""
 	}
-	return filepath.Join(home, ".config", "presence", "env")
+	return filepath.Join(home, ".config", "plexus", "env")
 }
 
 // ParseEnvFile reads KEY=VALUE lines; '#' starts a comment, blank lines are
@@ -66,5 +66,5 @@ func StateDir() string {
 	if err != nil {
 		return ""
 	}
-	return filepath.Join(home, ".local", "state", "presence")
+	return filepath.Join(home, ".local", "state", "plexus")
 }

@@ -1,11 +1,11 @@
 // launch.go — start an agent inside a named tmux session so it is attachable
 // from the cockpit, and reattach to one. This is the anti-drift piece: instead
 // of sessions being started ad-hoc (some in tmux, some not, on random sockets),
-// `presence launch` always creates a session on the shared `plexus` socket, which
+// `plexus launch` always creates a session on the shared `plexus` socket, which
 // the SessionStart hook then wires for attach automatically.
 //
-//	presence launch <claude|codex|opencode> [dir] [--detach] [--worktree] [-- args…]
-//	presence attach <name>
+//	plexus launch <claude|codex|opencode> [dir] [--detach] [--worktree] [-- args…]
+//	plexus attach <name>
 //
 // Ergonomic aliases (also via the `plexus` symlink): `plexus claude [dir]`.
 package main
@@ -38,7 +38,7 @@ func shQuote(s string) string { return "'" + strings.ReplaceAll(s, "'", `'\''`) 
 // opencodeWrapCmd builds the tmux session command for a decoupled OpenCode stack, so an
 // interactive session is both attachable AND injectable: an addressable `opencode serve`, a
 // TUI-mode `edc opencode serve` sidecar on a fixed inject port EP (injects visibly via /tui/*),
-// and the `opencode attach` the human sees. The OpenCode plugin registers the session in presence
+// and the `opencode attach` the human sees. The OpenCode plugin registers the session in plexus
 // with inject_port=EP (it reads $EDC_INJECT_PORT), so `edc /inject` events land in the live TUI.
 // Without edc on PATH it degrades to plain attach (attachable, not injectable).
 func opencodeWrapCmd(ocBin, dir string, extra []string) []string {
@@ -212,9 +212,9 @@ func cmdLaunch(args []string) {
 	if agent == "opencode" {
 		sessCmd = opencodeWrapCmd(agentBin, abs, extra)
 	}
-	// -e PRESENCE_AGENT so the session registers with the right kind (claude|codex|opencode).
+	// -e PLEXUS_AGENT so the session registers with the right kind (claude|codex|opencode).
 	tmArgs := append([]string{"-L", plexusSocket, "new-session", "-d", "-s", name,
-		"-e", "PRESENCE_AGENT=" + agent, "-c", abs}, sessCmd...)
+		"-e", "PLEXUS_AGENT=" + agent, "-c", abs}, sessCmd...)
 	create := exec.Command(tm, tmArgs...)
 	create.Stdout, create.Stderr = os.Stderr, os.Stderr
 	if err := create.Run(); err != nil {
@@ -240,7 +240,7 @@ func cmdAttach(args []string) {
 }
 
 // cmdKill ends a plexus session by name: kills the tmux session (which terminates
-// the agent) and reaps its now-orphaned web terminal. The presence row clears on
+// the agent) and reaps its now-orphaned web terminal. The plexus row clears on
 // the session's own SessionEnd, or is pruned once it goes stale.
 func cmdKill(args []string) {
 	name := argAt(args, 0)

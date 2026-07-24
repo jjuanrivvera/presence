@@ -10,14 +10,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jjuanrivvera/presence/internal/store"
+	"github.com/jjuanrivvera/plexus/internal/store"
 )
 
 const testToken = "test-token"
 
 func newTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
-	st, err := store.Open(filepath.Join(t.TempDir(), "presence.db"))
+	st, err := store.Open(filepath.Join(t.TempDir(), "plexus.db"))
 	if err != nil {
 		t.Fatalf("open store: %v", err)
 	}
@@ -98,8 +98,8 @@ func TestUIServedWithoutAuth(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read body: %v", err)
 	}
-	if !strings.Contains(string(body), "presence") {
-		t.Errorf("body does not contain %q", "presence")
+	if !strings.Contains(string(body), "plexus") {
+		t.Errorf("body does not contain %q", "plexus")
 	}
 
 	resp = doReq(t, ts, http.MethodPost, "/ui", "", "")

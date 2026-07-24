@@ -1,5 +1,5 @@
 #!/bin/sh
-# Keepalive de presence: late por cada sesion registrada localmente cuyo proceso
+# Keepalive de plexus: late por cada sesion registrada localmente cuyo proceso
 # claude siga vivo. Pensado para daemons companion que pasan horas sin tool-calls
 # (sin PostToolUse no hay heartbeat y el TTL del server los poda).
 # Corre via systemd timer / cron cada ~2 min. Silencioso y fail-soft.
@@ -7,7 +7,7 @@ BIN="$HOME/.local/bin/presence"
 [ -x "$BIN" ] || BIN="$(command -v presence 2>/dev/null)"
 [ -n "$BIN" ] || exit 0
 
-SDIR="$HOME/.local/state/presence/sessions"
+SDIR="$HOME/.local/state/plexus/sessions"
 [ -d "$SDIR" ] || exit 0
 
 for f in "$SDIR"/*; do

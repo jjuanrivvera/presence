@@ -1,7 +1,7 @@
 # Architecture
 
-Plexus is two layers over one private network: **presence** (observe / control / launch) and **edc**
-(inject). Each agent session sits in the middle — registered in presence, reachable by edc.
+Plexus is two layers over one private network: **plexus** (observe / control / launch) and **edc**
+(inject). Each agent session sits in the middle — registered in plexus, reachable by edc.
 
 ## Topology
 
@@ -15,7 +15,7 @@ flowchart TB
       A2["agent session"]
     end
     subgraph host["an always-on host"]
-      SRV["presence serve<br/>SQLite registry + /ui cockpit"]
+      SRV["plexus serve<br/>SQLite registry + /ui cockpit"]
     end
   end
   A1 -->|register · heartbeat| SRV
@@ -34,14 +34,14 @@ On a single machine the whole thing runs on `127.0.0.1`.
 
 ## How the two tools compose
 
-| | **presence** | **edc** |
+| | **plexus** | **edc** |
 |---|---|---|
 | Role | see, control, launch | feed events in as turns |
 | Direction | you → session (observe/steer) | event → session (stimulus) |
 | Surface | registry API, `/ui` cockpit, `plexus` launcher | `/inject` HTTP + per-agent adapters |
 | Knows about the agent? | only its *kind* (a chip + a filter) | yes — one adapter per agent |
 
-They meet at the **session**: edc injects a turn; presence lets you watch and steer that same session.
+They meet at the **session**: edc injects a turn; plexus lets you watch and steer that same session.
 
 ## An event's journey
 
@@ -50,7 +50,7 @@ sequenceDiagram
   participant X as external event
   participant E as edc /inject
   participant A as agent session
-  participant P as presence cockpit
+  participant P as plexus cockpit
   X->>E: POST {source, event, text} + Bearer
   E->>A: deliver as a turn (untrusted data)
   A->>A: investigate / draft (no outward side effects)
