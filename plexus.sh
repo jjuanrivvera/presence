@@ -47,7 +47,7 @@ fi
 
 if [ ! -f "$ECONF" ]; then
   mkdir -p "$(dirname "$ECONF")"
-  printf '{ "inject_secret": "%s", "inject_port": "auto" }\n' "$(gensecret)" > "$ECONF"
+  printf '{ "inject_secret": "%s", "inject_port": "auto", "inject_bind": "0.0.0.0" }\n' "$(gensecret)" > "$ECONF"
   say "  ✓ wrote $ECONF (generated inject_secret)"
 else
   say "  • $ECONF exists — left untouched"

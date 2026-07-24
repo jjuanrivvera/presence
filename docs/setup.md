@@ -93,8 +93,13 @@ PLEXUS_HOST=<label>                      # this machine's label, e.g. laptop
 
 ```json
 // ~/.config/edc/config.json — where injection is served
-{ "inject_secret": "<secret>", "inject_port": "auto" }
+{ "inject_secret": "<secret>", "inject_port": "auto", "inject_bind": "0.0.0.0" }
 ```
+
+`inject_bind` defaults to `127.0.0.1` (local injection only). Set it to `0.0.0.0` to let an
+emitter on another machine reach the session over your private network — the listener stays
+**fail-closed** (no valid secret, no injection), so the bind widens reachability, not trust.
+Bind to a specific private IP instead of `0.0.0.0` if you want to exclude other local interfaces.
 
 Generate secrets with `openssl rand -hex 32`. Keep them out of version control.
 
