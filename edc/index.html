@@ -27,7 +27,7 @@
     
     
       
-        <title>edc - mesh</title>
+        <title>edc - Plexus</title>
       
     
     
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="mesh" class="md-header__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-header__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -106,7 +106,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            mesh
+            Plexus
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -322,13 +322,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="mesh" class="md-nav__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-nav__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    mesh
+    Plexus
   </label>
   
     <div class="md-nav__source">
@@ -907,6 +907,14 @@
 <p><strong>Event-Driven Coding-agents.</strong> A session is normally reactive — it waits for a human to type. <code>edc</code> makes
 it event-driven: an external system POSTs an event and it lands as a <strong>turn</strong> in a running session.</p>
 <p>The shape is deliberately simple: <strong>one agnostic emitter, one adapter per agent.</strong></p>
+<div class="admonition tip">
+<p class="admonition-title">edc works on its own — you don't need the rest of Plexus</p>
+<p><code>edc</code> is a <strong>standalone binary</strong>. It does not need <code>presence</code>, the registry, the cockpit, tmux, or
+ttyd. Drop <code>edc</code> onto any machine and you can wake a single Claude / Codex / OpenCode session with
+external events — nothing else required. <code>presence</code> and <code>edc</code> are <strong>independent tools</strong>: use either
+alone, or both together. When both are present, <code>edc</code>'s daemon <em>also</em> self-registers its session into
+<code>presence</code> so it appears in the cockpit — but that's a convenience, not a dependency.</p>
+</div>
 <h2 id="the-emitter-post-inject">The emitter — <code>POST /inject</code><a class="headerlink" href="#the-emitter-post-inject" title="Permanent link">&para;</a></h2>
 <p>A tool (a cron, a watcher, another agent) sends the same JSON to a local, token-authed endpoint. The
 caller is <strong>identical</strong> whether the session is Claude, Codex, or OpenCode.</p>
@@ -963,7 +971,7 @@ event as a <code>turn/start</code>. It pins a non-interactive posture (approval 
   self-registers.</li>
 <li><strong>TUI mode</strong> (<code>EDC_OPENCODE_TUI=1</code> + <code>EDC_OPENCODE_URL</code>) — attaches to a shared server and types each
   event into the <em>attached</em> session via <code>/tui/append-prompt</code> + <code>/tui/submit-prompt</code>, so the human
-  <strong>sees</strong> the injected turn. This is what <code>mesh opencode</code> wires up automatically.</li>
+  <strong>sees</strong> the injected turn. This is what <code>plexus opencode</code> wires up automatically.</li>
 </ul>
 </div>
 </div>
@@ -983,11 +991,11 @@ investigates, prepares, drafts, and hands the decision to the human.</p>
 <p>An injected event looks exactly like a prompt-injection attempt would — treating it as data is the whole
 point.</p>
 <h2 id="deploying-an-injectable-session">Deploying an injectable session<a class="headerlink" href="#deploying-an-injectable-session" title="Permanent link">&para;</a></h2>
-<p>Interactive agents launched with <a href="../presence/#role-3-launcher-mesh"><code>mesh</code></a> become injectable automatically:</p>
+<p>Interactive agents launched with <a href="../presence/#role-3-launcher-plexus"><code>plexus</code></a> become injectable automatically:</p>
 <ul>
 <li><strong>Claude</strong> — the channel MCP is loaded as a plugin; the session's <code>inject_port</code> is registered.</li>
 <li><strong>Codex</strong> — run the <code>edc codex serve</code> daemon, or launch interactive and let the plugin register.</li>
-<li><strong>OpenCode</strong> — <code>mesh opencode</code> runs a decoupled stack (an addressable <code>opencode serve</code> + a TUI-mode
+<li><strong>OpenCode</strong> — <code>plexus opencode</code> runs a decoupled stack (an addressable <code>opencode serve</code> + a TUI-mode
   <code>edc</code> sidecar + the <code>opencode attach</code> you see), so the interactive session is attachable <strong>and</strong>
   injectable.</li>
 </ul>

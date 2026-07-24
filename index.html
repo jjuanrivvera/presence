@@ -25,7 +25,7 @@
     
     
       
-        <title>mesh</title>
+        <title>Plexus</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mesh" class="md-skip">
+        <a href="#plexus" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +90,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="mesh" class="md-header__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href="." title="Plexus" class="md-header__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -104,7 +104,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            mesh
+            Plexus
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -320,13 +320,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="mesh" class="md-nav__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href="." title="Plexus" class="md-nav__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    mesh
+    Plexus
   </label>
   
     <div class="md-nav__source">
@@ -408,6 +408,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#two-independent-binaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two independent binaries
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#what-it-supports" class="md-nav__link">
@@ -822,6 +833,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#two-independent-binaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two independent binaries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-it-supports" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -874,9 +896,9 @@
   
 
 
-<h1 id="mesh">mesh<a class="headerlink" href="#mesh" title="Permanent link">&para;</a></h1>
+<h1 id="plexus">Plexus<a class="headerlink" href="#plexus" title="Permanent link">&para;</a></h1>
 <p><strong>One nervous system for your coding agents, across your machines.</strong></p>
-<p><code>mesh</code> is two small, self-hosted Go tools that work together:</p>
+<p><code>plexus</code> is two small, self-hosted Go tools that work together:</p>
 <ul>
 <li><strong><a href="presence/">presence</a></strong> — the <em>eyes and hands</em>. A session <strong>registry</strong>, a web <strong>cockpit</strong> with each
   session's live terminal, and a <strong>launcher</strong> for starting agents you can attach to from anywhere.</li>
@@ -890,6 +912,32 @@ live session through <strong>edc</strong>; you watch that session work, type int
   E["event&lt;br/&gt;(cron · watcher · slack)"] --&gt;|edc /inject| S["a live agent session"]
   S --&gt;|register / attach| P["presence&lt;br/&gt;registry + cockpit"]
   H["you (any device)"] --&gt;|watch · type · interrupt| P</code></pre>
+<h2 id="two-independent-binaries">Two independent binaries<a class="headerlink" href="#two-independent-binaries" title="Permanent link">&para;</a></h2>
+<p>Plexus is two tools you can install and run <strong>separately or together</strong> — neither depends on the other:</p>
+<table>
+<thead>
+<tr>
+<th>Binary</th>
+<th>What it does</th>
+<th>What it needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>presence</code></strong> (also <code>plexus</code>)</td>
+<td>registry + cockpit + launcher — see, attach to, and launch sessions</td>
+<td>a private address to bind; <code>tmux</code> + <code>ttyd</code> for the launcher/attach</td>
+</tr>
+<tr>
+<td><strong><code>edc</code></strong></td>
+<td>inject external events into a live session as turns</td>
+<td>just the <code>edc</code> binary + a shared secret — no registry, no tmux</td>
+</tr>
+</tbody>
+</table>
+<p>Use <strong><code>presence</code> alone</strong> to watch and launch agents; use <strong><code>edc</code> alone</strong> to make a single session
+event-driven; use <strong>both</strong> to get an injectable, attachable fleet. See <a href="presence/">presence</a> and
+<a href="edc/">edc</a> for each.</p>
 <h2 id="what-it-supports">What it supports<a class="headerlink" href="#what-it-supports" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -927,11 +975,11 @@ live session through <strong>edc</strong>; you watch that session work, type int
 </table>
 <h2 id="the-60-second-tour">The 60-second tour<a class="headerlink" href="#the-60-second-tour" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># launch an agent in a tmux session you can reach from anywhere</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mesh<span class="w"> </span>claude<span class="w"> </span>~/code/api<span class="w">          </span><span class="c1"># or: mesh codex … / mesh opencode …</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>plexus<span class="w"> </span>claude<span class="w"> </span>~/code/api<span class="w">          </span><span class="c1"># or: plexus codex … / plexus opencode …</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># see the fleet</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mesh<span class="w"> </span>ls<span class="w">                          </span><span class="c1"># table of live sessions</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>mesh<span class="w"> </span>watch<span class="w">                       </span><span class="c1"># live full-screen cockpit (TUI)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>plexus<span class="w"> </span>ls<span class="w">                          </span><span class="c1"># table of live sessions</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>plexus<span class="w"> </span>watch<span class="w">                       </span><span class="c1"># live full-screen cockpit (TUI)</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># the web cockpit (installable PWA)</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>open<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PRESENCE_URL</span><span class="s2">/ui&quot;</span><span class="w">          </span><span class="c1"># sidebar of sessions + each one&#39;s live terminal</span>
@@ -946,11 +994,11 @@ live session through <strong>edc</strong>; you watch that session work, type int
 <li><strong><a href="architecture/">Architecture</a></strong> — how the two tools compose, and the topology.</li>
 <li><strong><a href="agents/">Agents</a></strong> — what each agent supports and how it's wired.</li>
 <li><strong><a href="setup/">Setup &amp; requirements</a></strong> — from one laptop to many machines; what's actually required.</li>
-<li><strong><a href="commands/">Command reference</a></strong> — every <code>mesh</code> / <code>presence</code> / <code>edc</code> verb.</li>
+<li><strong><a href="commands/">Command reference</a></strong> — every <code>plexus</code> / <code>presence</code> / <code>edc</code> verb.</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Design intent</p>
-<p><code>mesh</code> is built for a developer running a handful of long-lived agent sessions across machines they
+<p><code>plexus</code> is built for a developer running a handful of long-lived agent sessions across machines they
 own. The <strong>patterns</strong> — an agent-agnostic registry, a uniform injection contract, and a strict trust
 boundary — generalize to any scale; the <strong>implementation</strong> (a shared token, a single-node SQLite
 registry, tmux-based attach) is a solo-to-small-team reference. See <a href="setup/#portability">Setup</a>.</p>

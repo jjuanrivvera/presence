@@ -27,7 +27,7 @@
     
     
       
-        <title>presence - mesh</title>
+        <title>presence - Plexus</title>
       
     
     
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="mesh" class="md-header__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-header__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -106,7 +106,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            mesh
+            Plexus
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -322,13 +322,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="mesh" class="md-nav__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-nav__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    mesh
+    Plexus
   </label>
   
     <div class="md-nav__source">
@@ -633,10 +633,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#role-3-launcher-mesh" class="md-nav__link">
+  <a href="#role-3-launcher-plexus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Role 3 — Launcher (mesh)
+        Role 3 — Launcher (plexus)
       
     </span>
   </a>
@@ -644,10 +644,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-a-session-joins-the-mesh" class="md-nav__link">
+  <a href="#how-a-session-joins-plexus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How a session joins the mesh
+        How a session joins Plexus
       
     </span>
   </a>
@@ -873,10 +873,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#role-3-launcher-mesh" class="md-nav__link">
+  <a href="#role-3-launcher-plexus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Role 3 — Launcher (mesh)
+        Role 3 — Launcher (plexus)
       
     </span>
   </a>
@@ -884,10 +884,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-a-session-joins-the-mesh" class="md-nav__link">
+  <a href="#how-a-session-joins-plexus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How a session joins the mesh
+        How a session joins Plexus
       
     </span>
   </a>
@@ -926,8 +926,8 @@
 
 
 <h1 id="presence">presence<a class="headerlink" href="#presence" title="Permanent link">&para;</a></h1>
-<p>A single Go binary — installed as both <code>presence</code> and <code>mesh</code> — that plays three roles over one shared
-SQLite registry. It is the mesh's <em>eyes and hands</em>: see every session, attach to it, launch new ones.</p>
+<p>A single Go binary — installed as both <code>presence</code> and <code>plexus</code> — that plays three roles over one shared
+SQLite registry. It is Plexus's <em>eyes and hands</em>: see every session, attach to it, launch new ones.</p>
 <h2 id="role-1-registry">Role 1 — Registry<a class="headerlink" href="#role-1-registry" title="Permanent link">&para;</a></h2>
 <p><code>presence serve</code> runs the HTTP service on the always-on host (a private address or loopback only,
 bearer-authed). It keeps one row per session and auto-prunes stale ones.</p>
@@ -985,30 +985,30 @@ the right, the <strong>live terminal</strong> of the selected session.</p>
   interrupt — mirrored with whatever else is attached.</li>
 <li><strong>Mobile.</strong> On a phone it's master → detail: tap a session, get its full-screen terminal, back to the list.</li>
 </ul>
-<h2 id="role-3-launcher-mesh">Role 3 — Launcher (<code>mesh</code>)<a class="headerlink" href="#role-3-launcher-mesh" title="Permanent link">&para;</a></h2>
-<p><code>mesh</code> is the same binary. It starts an agent inside a <strong>named tmux session</strong> on a shared <code>mesh</code> socket, so
+<h2 id="role-3-launcher-plexus">Role 3 — Launcher (<code>plexus</code>)<a class="headerlink" href="#role-3-launcher-plexus" title="Permanent link">&para;</a></h2>
+<p><code>plexus</code> is the same binary. It starts an agent inside a <strong>named tmux session</strong> on a shared <code>plexus</code> socket, so
 the session survives closing the terminal and is reachable from any machine.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mesh<span class="w"> </span>claude<span class="w"> </span>~/code/api<span class="w">           </span><span class="c1"># drop into an attachable claude session</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mesh<span class="w"> </span>codex<span class="w">  </span>~/code/api<span class="w">           </span><span class="c1"># same, for codex</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>mesh<span class="w"> </span>opencode<span class="w"> </span>~/code/api<span class="w">         </span><span class="c1"># decoupled stack — attachable AND injectable</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>plexus<span class="w"> </span>claude<span class="w"> </span>~/code/api<span class="w">           </span><span class="c1"># drop into an attachable claude session</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>plexus<span class="w"> </span>codex<span class="w">  </span>~/code/api<span class="w">           </span><span class="c1"># same, for codex</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>plexus<span class="w"> </span>opencode<span class="w"> </span>~/code/api<span class="w">         </span><span class="c1"># decoupled stack — attachable AND injectable</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mesh<span class="w"> </span>attach<span class="w"> </span>api<span class="w">                  </span><span class="c1"># reattach (or click it in the cockpit)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>mesh<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>api<span class="w">                    </span><span class="c1"># end the session</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>mesh<span class="w"> </span>ls<span class="w">                          </span><span class="c1"># the fleet</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>plexus<span class="w"> </span>attach<span class="w"> </span>api<span class="w">                  </span><span class="c1"># reattach (or click it in the cockpit)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>plexus<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>api<span class="w">                    </span><span class="c1"># end the session</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>plexus<span class="w"> </span>ls<span class="w">                          </span><span class="c1"># the fleet</span>
 </code></pre></div>
 <ul>
-<li><strong><code>--detach</code></strong> creates the session headless (background / headless agents): <code>mesh claude --detach ~/x</code>.</li>
-<li><strong>Re-running <code>mesh claude &lt;same dir&gt;</code> reattaches</strong> instead of starting a second agent.</li>
-<li>Sessions <strong>persist</strong> across a closed terminal; only exiting the agent or <code>mesh kill</code> ends them.</li>
+<li><strong><code>--detach</code></strong> creates the session headless (background / headless agents): <code>plexus claude --detach ~/x</code>.</li>
+<li><strong>Re-running <code>plexus claude &lt;same dir&gt;</code> reattaches</strong> instead of starting a second agent.</li>
+<li>Sessions <strong>persist</strong> across a closed terminal; only exiting the agent or <code>plexus kill</code> ends them.</li>
 </ul>
 <p>See <a href="../commands/">Command reference</a> for every flag.</p>
-<h2 id="how-a-session-joins-the-mesh">How a session joins the mesh<a class="headerlink" href="#how-a-session-joins-the-mesh" title="Permanent link">&para;</a></h2>
+<h2 id="how-a-session-joins-plexus">How a session joins Plexus<a class="headerlink" href="#how-a-session-joins-plexus" title="Permanent link">&para;</a></h2>
 <p>Every agent goes through the <strong>same two calls</strong> — <code>presence ttyd spawn</code> (the web terminal) and
 <code>presence register</code> — only <em>where</em> they're wired differs. That's what keeps the cockpit agent-agnostic.</p>
 <pre class="mermaid"><code>flowchart LR
   S["session-start&lt;br/&gt;(hook / plugin)"] --&gt; T["presence ttyd spawn&lt;br/&gt;web terminal in tmux"]
   T --&gt; R["presence register&lt;br/&gt;host · repo · inject_port · attach_addr"]
-  R --&gt; L["live in the mesh"]
+  R --&gt; L["live in Plexus"]
   L --&gt; E["session-end → deregister&lt;br/&gt;+ reap orphan terminals"]</code></pre>
 <ul>
 <li><strong>Claude Code</strong> — the hooks in the repo's <code>hooks/</code> (SessionStart / SessionEnd / keepalive).</li>

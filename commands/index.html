@@ -25,7 +25,7 @@
     
     
       
-        <title>Command reference - mesh</title>
+        <title>Command reference - Plexus</title>
       
     
     
@@ -90,7 +90,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="mesh" class="md-header__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-header__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -104,7 +104,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            mesh
+            Plexus
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -320,13 +320,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="mesh" class="md-nav__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-nav__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    mesh
+    Plexus
   </label>
   
     <div class="md-nav__source">
@@ -752,10 +752,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mesh-launch-attach" class="md-nav__link">
+  <a href="#plexus-launch-attach" class="md-nav__link">
     <span class="md-ellipsis">
       
-        mesh — launch &amp; attach
+        plexus — launch &amp; attach
       
     </span>
   </a>
@@ -785,10 +785,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-mesh-skill" class="md-nav__link">
+  <a href="#the-plexus-skill" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The mesh skill
+        The plexus skill
       
     </span>
   </a>
@@ -838,10 +838,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mesh-launch-attach" class="md-nav__link">
+  <a href="#plexus-launch-attach" class="md-nav__link">
     <span class="md-ellipsis">
       
-        mesh — launch &amp; attach
+        plexus — launch &amp; attach
       
     </span>
   </a>
@@ -871,10 +871,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-mesh-skill" class="md-nav__link">
+  <a href="#the-plexus-skill" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The mesh skill
+        The plexus skill
       
     </span>
   </a>
@@ -902,8 +902,8 @@
 
 
 <h1 id="command-reference">Command reference<a class="headerlink" href="#command-reference" title="Permanent link">&para;</a></h1>
-<h2 id="mesh-launch-attach"><code>mesh</code> — launch &amp; attach<a class="headerlink" href="#mesh-launch-attach" title="Permanent link">&para;</a></h2>
-<p><code>mesh</code> is a symlink to <code>presence</code>; these are the ergonomic verbs.</p>
+<h2 id="plexus-launch-attach"><code>plexus</code> — launch &amp; attach<a class="headerlink" href="#plexus-launch-attach" title="Permanent link">&para;</a></h2>
+<p><code>plexus</code> is a symlink to <code>presence</code>; these are the ergonomic verbs.</p>
 <table>
 <thead>
 <tr>
@@ -913,36 +913,36 @@
 </thead>
 <tbody>
 <tr>
-<td><code>mesh claude [dir]</code></td>
-<td>launch Claude Code in a tmux session on the <code>mesh</code> socket, and attach</td>
+<td><code>plexus claude [dir]</code></td>
+<td>launch Claude Code in a tmux session on the <code>plexus</code> socket, and attach</td>
 </tr>
 <tr>
-<td><code>mesh codex [dir]</code></td>
+<td><code>plexus codex [dir]</code></td>
 <td>same, for Codex</td>
 </tr>
 <tr>
-<td><code>mesh opencode [dir]</code></td>
+<td><code>plexus opencode [dir]</code></td>
 <td>same, for OpenCode (decoupled stack: attachable <strong>and</strong> injectable)</td>
 </tr>
 <tr>
-<td><code>mesh attach &lt;name&gt;</code></td>
-<td>reattach to a running mesh session</td>
+<td><code>plexus attach &lt;name&gt;</code></td>
+<td>reattach to a running plexus session</td>
 </tr>
 <tr>
-<td><code>mesh kill &lt;name&gt;</code></td>
-<td>end a mesh session (kills the agent + its web terminal)</td>
+<td><code>plexus kill &lt;name&gt;</code></td>
+<td>end a session (kills the agent + its web terminal)</td>
 </tr>
 <tr>
-<td><code>mesh ls</code></td>
+<td><code>plexus ls</code></td>
 <td>list live sessions (alias of <code>presence list</code>)</td>
 </tr>
 <tr>
-<td><code>mesh watch</code></td>
+<td><code>plexus watch</code></td>
 <td>live full-screen cockpit in the terminal</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Launcher flags</strong> (<code>mesh &lt;agent&gt; …</code>):</p>
+<p><strong>Launcher flags</strong> (<code>plexus &lt;agent&gt; …</code>):</p>
 <table>
 <thead>
 <tr>
@@ -1032,8 +1032,8 @@ output when there's no match, so it scripts cleanly.</p>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$EDC_INJECT_SECRET</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;source&quot;:&quot;cron&quot;,&quot;event&quot;:&quot;nightly&quot;,&quot;text&quot;:&quot;run the report&quot;}&#39;</span>
 </code></pre></div>
-<h2 id="the-mesh-skill">The <code>mesh</code> skill<a class="headerlink" href="#the-mesh-skill" title="Permanent link">&para;</a></h2>
-<p>Install the agent skill that teaches an agent to drive the mesh:</p>
+<h2 id="the-plexus-skill">The <code>plexus</code> skill<a class="headerlink" href="#the-plexus-skill" title="Permanent link">&para;</a></h2>
+<p>Install the agent skill that teaches an agent to drive Plexus:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npx<span class="w"> </span>skills<span class="w"> </span>add<span class="w"> </span>jjuanrivvera/presence<span class="w">          </span><span class="c1"># into this project</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>npx<span class="w"> </span>skills<span class="w"> </span>add<span class="w"> </span>jjuanrivvera/presence<span class="w"> </span>--global<span class="w"> </span><span class="c1"># for all projects</span>
 </code></pre></div>

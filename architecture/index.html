@@ -27,7 +27,7 @@
     
     
       
-        <title>Architecture - mesh</title>
+        <title>Architecture - Plexus</title>
       
     
     
@@ -92,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="mesh" class="md-header__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-header__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -106,7 +106,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            mesh
+            Plexus
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -322,13 +322,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="mesh" class="md-nav__button md-logo" aria-label="mesh" data-md-component="logo">
+    <a href=".." title="Plexus" class="md-nav__button md-logo" aria-label="Plexus" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    mesh
+    Plexus
   </label>
   
     <div class="md-nav__source">
@@ -904,7 +904,7 @@
 
 
 <h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
-<p>The mesh is two layers over one private network: <strong>presence</strong> (observe / control / launch) and <strong>edc</strong>
+<p>Plexus is two layers over one private network: <strong>presence</strong> (observe / control / launch) and <strong>edc</strong>
 (inject). Each agent session sits in the middle — registered in presence, reachable by edc.</p>
 <h2 id="topology">Topology<a class="headerlink" href="#topology" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TB
@@ -953,7 +953,7 @@ On a single machine the whole thing runs on <code>127.0.0.1</code>.</p>
 </tr>
 <tr>
 <td>Surface</td>
-<td>registry API, <code>/ui</code> cockpit, <code>mesh</code> launcher</td>
+<td>registry API, <code>/ui</code> cockpit, <code>plexus</code> launcher</td>
 <td><code>/inject</code> HTTP + per-agent adapters</td>
 </tr>
 <tr>
@@ -975,7 +975,7 @@ On a single machine the whole thing runs on <code>127.0.0.1</code>.</p>
   A-&gt;&gt;A: investigate / draft (no outward side effects)
   P--&gt;&gt;A: you attach, watch, type, or interrupt</code></pre>
 <h2 id="the-registry-row">The registry row<a class="headerlink" href="#the-registry-row" title="Permanent link">&para;</a></h2>
-<p>Everything the mesh knows about a session is one row:</p>
+<p>Everything Plexus knows about a session is one row:</p>
 <table>
 <thead>
 <tr>
